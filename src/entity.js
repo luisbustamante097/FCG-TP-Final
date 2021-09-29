@@ -1,6 +1,5 @@
 //? Aca vamos a poner los metodos de creacion de objetos
 
-
 function createMainShip() {
     // Geometry: Box
     var geometry = new THREE.BoxGeometry( 20, 20, 20)
@@ -22,6 +21,14 @@ function createMainShipBullet() {
     bullet.position.copy(originPoint)
     scene.add( bullet )
     return bullet
+}
+
+function createEnemies(position) {
+    var geometry = new THREE.BoxGeometry( 20, 5, 10)
+    var material = new THREE.MeshStandardMaterial( { color: 0xff0051 })
+    enemy = new THREE.Mesh ( geometry, material )
+    enemy.position.clone(position)
+    scene.add( enemy )
 }
 
 function removeEntity(mesh) {

@@ -1,7 +1,7 @@
 // Variables globales estandares
 var container, scene, camera, renderer, controls, stats
 // Keyboard controller
-// var keyboard = new THREEx.KeyboardState()
+// var keyboard = new THREEx.KeyboardState()    //TODO: sacar libreria si no era necesaria
 var keyboard = new KeyboardState()
 // Clock for tracking time
 var clock = new THREE.Clock()
@@ -57,11 +57,6 @@ function init(){
     //---------------------------INICIALIZACION---------------------------
     //####################################################################
     
-	//####################################//
-	//------------- CONTROLS -------------//
-    //TODO: Quitar al final
-	controls = new THREE.OrbitControls( camera, renderer.domElement )
-    controls.update();
     
     //##################################//
     //------------- LIGHTS -------------//
@@ -90,6 +85,12 @@ function init(){
     // Roto el tablero adecuadamente
 	floor.rotation.x = Math.PI / 2;
 	scene.add(floor);
+    
+    //####################################//
+	//------------- CONTROLS -------------//
+    //TODO: Sacar cuando ya no se necesite
+	controls = new THREE.OrbitControls( camera, renderer.domElement )
+    controls.update();
     
     //################################//
     //------------- AXES -------------//
@@ -125,7 +126,7 @@ function init(){
     //####################################//
     //------------- GEOMETRY -------------//
         
-    //----Creo box
+    //----Creo main ship
     createMainShip()
     
     //----Creo Wireframe Cube   //TODO: Sacar cuando no se necesite
