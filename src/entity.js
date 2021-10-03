@@ -1,5 +1,6 @@
 //? Aca vamos a poner los metodos de creacion de objetos
 
+// Este codigo es para crear una caja normal como mainship
 /* function createMainShip() {
     // Geometry: Box
     var geometry = new THREE.BoxGeometry( 20, 20, 20)
@@ -10,38 +11,30 @@
     mainShip.position.set(0,10,250)
     // Lo agrego a la escena
     scene.add( mainShip )
-} // CREAR SOLO CAJA*/ 
+} */ 
 
 function createMainShip() {
-    //-------CODIGO COPIADO DE LA PAGINA OFICIAL DE THREE.JS    
-    // instantiate a loader
-    const loader = new THREE.OBJLoader();
-
-    // load a resource
+    //-------TEMPLATE COPIADO DE LA PAGINA DE THREE.JS   
+    // Instantiate a loader
+    const loader = new THREE.GLTFLoader();
+    // Load a glTF resource
     loader.load(
         // resource URL
-        'models/Feisar_Ship.obj',
-        // called when resource is loaded
-        function ( object ) {
-            // El children[0] del object es el mesh que necesitamos
-            mainShip = object.children[0]
+        'models/lowpoly_spaceship/scene.gltf',
+        // called when the resource is loaded
+        function ( gltf ) {
+            // Busco el mesh del gltf
+            gltf.scene.traverse( function ( child ) {
+                if ( child.isMesh ) mainShip = child;
+            })
             
             // Inicializo tamaño y posicion
             mainShip.position.set(0,10,250)
-            mainShip.scale.set(0.2,0.2,0.2)
+            mainShip.scale.set(3,3,3)
             
             scene.add( mainShip );
-        },
-        // called when loading is in progresses
-        function ( xhr ) {
-            console.log( ( xhr.loaded / xhr.total * 100 ) + '% loaded' );
-        },
-        // called when loading has errors
-        function ( error ) {
-            console.log( 'An error happened' );
-        }
+        }, onProgress, onError
     );
-    
 }
 
 function createMainShipBullet() {
@@ -68,4 +61,11 @@ function removeEntity(mesh) {
     object.geometry.dispose();
     object.material.dispose();
     scene.remove( object );
+}
+
+const onProgress = function ( xhr ) {
+    console.log( ( xhr.loaded / xhr.total * 100 ) + '% loaded' );
+}
+const onError = function ( error ) {
+    console.log( 'An error happened' );
 }
