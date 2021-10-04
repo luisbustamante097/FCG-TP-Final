@@ -22,6 +22,9 @@ var collidableMeshListOfMainShip =[]
 //* Lista de Bullets
 var bulletsList = []
 
+//* Lista de naves enemigas
+var allEnemies = []
+
 
 init();
 animate();
@@ -128,6 +131,9 @@ function init(){
         
     //----Creo main ship
     createMainShip()
+    
+    //----Creo las naves enemigas
+    createEnemies()
     
     //----Creo Wireframe Cube   //TODO: Sacar cuando no se necesite
     var geometry = new THREE.BoxGeometry( 50, 50, 50)

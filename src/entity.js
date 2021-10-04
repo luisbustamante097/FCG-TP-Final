@@ -1,18 +1,5 @@
 //? Aca vamos a poner los metodos de creacion de objetos
 
-// Este codigo es para crear una caja normal como mainship
-/* function createMainShip() {
-    // Geometry: Box
-    var geometry = new THREE.BoxGeometry( 20, 20, 20)
-    // Material: Standard
-    var material = new THREE.MeshStandardMaterial( { color: 0xff0051 })
-    // Mesh: geometry + material
-    mainShip = new THREE.Mesh ( geometry, material )
-    mainShip.position.set(0,10,250)
-    // Lo agrego a la escena
-    scene.add( mainShip )
-} */ 
-
 function createMainShip() {
     //-------TEMPLATE COPIADO DE LA PAGINA DE THREE.JS   
     // Instantiate a loader
@@ -48,12 +35,48 @@ function createMainShipBullet() {
     return bullet
 }
 
-function createEnemies(position) {
-    var geometry = new THREE.BoxGeometry( 20, 5, 10)
-    var material = new THREE.MeshStandardMaterial( { color: 0xff0051 })
-    enemy = new THREE.Mesh ( geometry, material )
-    enemy.position.clone(position)
-    scene.add( enemy )
+function createEnemies() {    
+    var initialX = -30, initialY = 10, initialZ = 0
+    var xIncr = 0, zIncr = 0
+    var inRow = 5, inCols = 5
+    
+    for (let i = 0; i < inCols; i++) {
+        createEnemiesInRow()
+        zIncr += 40
+        xIncr = 0
+    }
+    
+    function createEnemiesInRow() {
+        for (let i = 0; i < inRow; i++) {
+            var enemy = createAnEnemy(new THREE.Vector3(initialX + xIncr, initialY, initialZ + zIncr))
+            allEnemies.push(enemy)
+            xIncr += 40   
+        }
+    }
+}
+
+function createAnEnemy(position) {
+    var enemy
+    var size = 100
+    const loader = new THREE.OBJLoader()
+    
+    loader.load(
+        'models/enemy_spaceship/spaceship.obj',
+        function ( object ) {
+            // El children[0] del object es el mesh que necesitamos
+            var enemyMesh = object.children[0]
+            enemyGeometry = enemyMesh.geometry
+            var enemyMaterial = new THREE.MeshStandardMaterial( { color: 0x00ff00 })
+            enemy = new THREE.Mesh ( enemyGeometry, enemyMaterial )
+            
+            // Inicializo tamaño y posicion
+            enemy.position.copy(position)
+            enemy.scale.set(size,size,size)
+            
+            scene.add( enemy )
+        }, onProgress, onError
+    );
+    return enemy
 }
 
 function removeEntity(mesh) {
@@ -69,3 +92,53 @@ const onProgress = function ( xhr ) {
 const onError = function ( error ) {
     console.log( 'An error happened' );
 }
+
+
+
+
+
+
+//TODO: Sacar cuando terminemos
+//!--------------------------------------------------------------------------
+//!---------------------------CODIGO AUXILIAR--------------------------------
+//!--------------------------------------------------------------------------
+
+function createWithMTLAndOBJ() {
+    const manager = new THREE.LoadingManager();
+    new THREE.MTLLoader( manager )
+        .setPath( 'models/example/' )
+        .load( 'Handgun_obj.mtl', function ( materials ) {
+            materials.preload();
+            console.log(materials)
+            new THREE.OBJLoader( manager )
+                .setMaterials( materials )
+                .setPath( 'models/example/' )
+                .load( 'Handgun_obj.obj',
+                    function ( object ) {
+                        // // El children[0] del object es el mesh que necesitamos
+                        // mainShip = object.children[0]
+                        object.scale.set(20,20,20)
+                        
+                        scene.add( object );
+                    }, onProgress, onError  
+                );
+        }, onProgress, onError);
+
+}
+
+// Este codigo es para crear una caja normal como mainship
+function createBox() {
+    // Geometry: Box
+    var geometry = new THREE.BoxGeometry( 20, 20, 20)
+    // Material: Standard
+    var material = new THREE.MeshStandardMaterial( { color: 0xff0051 })
+    // Mesh: geometry + material
+    mainShip = new THREE.Mesh ( geometry, material )
+    mainShip.position.set(0,10,250)
+    // Lo agrego a la escena
+    scene.add( mainShip )
+} 
+
+//!--------------------------------------------------------------------------
+//!---------------------------CODIGO AUXILIAR--------------------------------
+//!--------------------------------------------------------------------------
