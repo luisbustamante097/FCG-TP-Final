@@ -49,7 +49,7 @@ function createEnemies() {
     function createEnemiesInRow() {
         for (let i = 0; i < inRow; i++) {
             var enemy = createAnEnemy(new THREE.Vector3(initialX + xIncr, initialY, initialZ + zIncr))
-            allEnemies.push(enemy)
+            enemySpaceshipsList.push(enemy)
             xIncr += 40   
         }
     }
