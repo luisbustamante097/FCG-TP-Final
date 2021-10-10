@@ -279,7 +279,7 @@ function render()
 	renderer.render( scene, camera );
 }
 
-function checkIfCollides(object, test, collidableMeshListOfObject) {
+function checkIfCollides(object, handler, collidableMeshesListOfObject) {
     var originPoint = object.position.clone()
     var position = object.geometry.attributes.position
     var localVertex = new THREE.Vector3()
@@ -291,9 +291,9 @@ function checkIfCollides(object, test, collidableMeshListOfObject) {
         var directionVector = globalVertex.sub( object.position )
         
         var ray = new THREE.Raycaster( originPoint, directionVector.clone().normalize() )
-        var collisionResults = ray.intersectObjects( collidableMeshListOfObject )
+        var collisionResults = ray.intersectObjects( collidableMeshesListOfObject )
         if ( collisionResults.length > 0 && collisionResults[0].distance < directionVector.length() ) {
-            test()
+            handler(object)
         }
     }	
 }
