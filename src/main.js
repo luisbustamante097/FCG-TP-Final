@@ -1,7 +1,6 @@
 // Variables globales estandares
 var container, scene, camera, renderer, controls, stats
-// Keyboard controller
-// var keyboard = new THREEx.KeyboardState()    //TODO: sacar libreria si no era necesaria
+// Keyboard controller (from KeyboardState.js)
 var keyboard = new KeyboardState()
 // Clock for tracking time
 var clock = new THREE.Clock()
@@ -157,16 +156,11 @@ function init(){
 	var wallGeometry = new THREE.BoxGeometry( 100, 100, 20, 1, 1, 1 );
 	var wallMaterial = new THREE.MeshStandardMaterial( {color: 0x8888ff} );
 	
-	// var wall = new THREE.Mesh(wallGeometry, wallMaterial);
-	// wall.position.set(100, 50, -100);
-	// scene.add(wall);
-	// collidableMeshesList_mainShip.push(wall);  // <-- Lo agrego a la lista de cosas que colisionan
-	
-	var wall2 = new THREE.Mesh(wallGeometry, wallMaterial);
-	wall2.position.set(-200, 50, 200);
-	wall2.rotation.y = 3.14159 / 2;
-	scene.add(wall2);
-	collidableMeshesList_mainShip.push(wall2); // <-- Lo agrego a la lista de cosas que colisionan
+	var wall = new THREE.Mesh(wallGeometry, wallMaterial);
+	wall.position.set(-200, 50, 200);
+	wall.rotation.y = 3.14159 / 2;
+	scene.add(wall);
+	collidableMeshesList_mainShip.push(wall); // <-- Lo agrego a la lista de cosas que colisionan
 
     //!######################################################################
     //!-----------------------------TESTING----------------------------------
@@ -212,18 +206,11 @@ function update() {
         createMainShipBullet()
     }
         
-    //---------------Tests
-        
-    if ( keyboard.down("R") )
-    mainShip.material.color = new THREE.Color(0x0000ff)
-        
         
     //##########################################################
     //------------------------ KEYBOARD ------------------------
     //##########################################################
     
-    //----BoxText //TODO: sacar cuando terminemos
-    clearText()
     
     //##############################################
     //-------Movimiento y destruccion de los bullets
@@ -257,10 +244,10 @@ function update() {
     
     
     //CODIGO PARA QUE EL CUBO SEPA QUE HACER AL COLLISIONAR
-    function test() {
-        appendText(" Hit ");
+    function mainShipCollisionHandler() {
+        // Nada por lo pronto
     }
-    checkIfCollides(mainShip, test, collidableMeshesList_mainShip)
+    checkIfCollides(mainShip, mainShipCollisionHandler, collidableMeshesList_mainShip)
     
     
     function bulletCollisionHandler(enemy) {
@@ -310,12 +297,3 @@ function checkIfCollides(object, handler, collidableMeshesListOfObject) {
         }
     }	
 }
-
-
-
-//TODO: Sacar cuando terminemos
-function clearText()
-{   document.getElementById('message').innerHTML = '..........';   }
-
-function appendText(txt)
-{   document.getElementById('message').innerHTML += txt;   }
