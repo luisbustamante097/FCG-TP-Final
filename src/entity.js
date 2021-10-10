@@ -18,6 +18,7 @@ function createMainShip() {
             // Inicializo tamaño y posicion
             mainShip.position.set(0,10,250)
             mainShip.scale.set(3,3,3)
+            mainShip.rotation.y = Math.PI;
             
             scene.add( mainShip );
         }, onProgress, onError

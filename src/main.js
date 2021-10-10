@@ -245,7 +245,7 @@ function update() {
     //!######################################################################
     
     //------CUBOS QUE GIRAN
-    mainShip.rotation.y += 0.02;
+    // mainShip.rotation.y += 0.02;
     // cube.rotation.x += 0.02;
     wireframeCube.rotation.x -= 0.01;
     wireframeCube.rotation.y -= 0.01;
