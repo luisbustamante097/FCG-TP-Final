@@ -8,9 +8,9 @@ var clock = new THREE.Clock()
 //* Atributos para la camara
 const SCREEN_WIDTH  = window.innerWidth
 const SCREEN_HEIGHT = window.innerHeight
-const VIEW_ANGLE = 70   // FOV
+const VIEW_ANGLE = 80   // FOV
 const ASPECT = SCREEN_WIDTH / SCREEN_HEIGHT
-const NEAR = 0.1, FAR = 5000   //TODO: Cambiar FAR si es necesario
+const NEAR = 0.1, FAR = 1000   //TODO: Cambiar FAR si es necesario
 
 //* Nave principal y wireframe flotante
 var mainShip, wireframeCube
@@ -48,8 +48,8 @@ function init(){
     // Seteo la posición de la camara mirando a la escena
 	camera.lookAt(scene.position);	
     // La acomodo de acuerdo a como queremos el juego
-	camera.position.set(0,200,400);
-	camera.rotation.x -= 2*Math.PI/8
+	camera.position.set(0,200,70)
+	camera.rotation.x -= 4*Math.PI/16
     
     //---------------------INICIALIZAR RENDERER---------------------
     renderer = new THREE.WebGLRenderer({ antialias: true})
@@ -78,25 +78,13 @@ function init(){
     
     //#################################//
     //------------- FLOOR -------------//
-
-	// note: 4x4 checkboard pattern scaled so that each square is 25 by 25 pixels.
-	var floorTexture = new THREE.TextureLoader().load( 'images/checkerboard.jpg' );
-    floorTexture.wrapS = floorTexture.wrapT = THREE.RepeatWrapping; 
-	floorTexture.repeat.set( 20, 20 );
-	// DoubleSide: render floorTexture on both sides of mesh
-	var floorMaterial = new THREE.MeshBasicMaterial( { map: floorTexture, side: THREE.DoubleSide } );
-	var floorGeometry = new THREE.PlaneGeometry(1000, 1000, 1, 1);
-	var floor = new THREE.Mesh(floorGeometry, floorMaterial);
-    
-    // Roto el tablero adecuadamente
-	floor.rotation.x = Math.PI / 2;
-	scene.add(floor);
+	createTestingFloor()
     
     //####################################//
 	//------------- CONTROLS -------------//
     //TODO: Sacar cuando ya no se necesite
-	controls = new THREE.OrbitControls( camera, renderer.domElement )
-    controls.update();
+	// controls = new THREE.OrbitControls( camera, renderer.domElement )
+    // controls.update();
     
     //################################//
     //------------- AXES -------------//
@@ -142,7 +130,7 @@ function init(){
     var geometry = new THREE.BoxGeometry( 50, 50, 50)
     var material = new THREE.MeshBasicMaterial( { wireframe: true })
     wireframeCube = new THREE.Mesh ( geometry, material )
-    wireframeCube.position.set(0,30,0)
+    wireframeCube.position.set(0,30,-500)
     scene.add( wireframeCube )
     
     
@@ -157,7 +145,7 @@ function init(){
 	var wallMaterial = new THREE.MeshStandardMaterial( {color: 0x8888ff} );
 	
 	var wall = new THREE.Mesh(wallGeometry, wallMaterial);
-	wall.position.set(-200, 50, 200);
+	wall.position.set(-200, 50, 0);
 	wall.rotation.y = 3.14159 / 2;
 	scene.add(wall);
 	collidableMeshesList_mainShip.push(wall); // <-- Lo agrego a la lista de cosas que colisionan
@@ -269,7 +257,7 @@ function update() {
     keyboard.update();
     
     //----Update de los controles Orbit //TODO: sacar cuando terminemos
-    controls.update();
+    // controls.update();
     //----Update de los stats //TODO: sacar cuando terminemos
     stats.update();
 }

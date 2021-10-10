@@ -16,7 +16,7 @@ function createMainShip() {
             })
             
             // Inicializo tamaño y posicion
-            mainShip.position.set(0,10,250)
+            mainShip.position.set(0,10,0)
             mainShip.scale.set(3,3,3)
             mainShip.rotation.y = Math.PI;
             
@@ -39,20 +39,21 @@ function createMainShipBullet() {
 }
 
 function createEnemies() {    
-    var initialX = -30, initialY = 10, initialZ = 0
+    var initialX = -200, initialY = 10, initialZ = -400
     var xIncr = 0, zIncr = 0
-    var inRow = 5, inCols = 5
+    var xStep = 40, zStep = 40
+    var inRow = 12, inCols = 5
     
     for (let i = 0; i < inCols; i++) {
         createEnemiesInRow()
-        zIncr += 40
+        zIncr += xStep
         xIncr = 0
     }
     
     function createEnemiesInRow() {
         for (let i = 0; i < inRow; i++) {
             createAnEnemy(new THREE.Vector3(initialX + xIncr, initialY, initialZ + zIncr))
-            xIncr += 40   
+            xIncr += zStep   
         }
     }
 }
@@ -97,7 +98,20 @@ const onError = function ( error ) {
     console.log( 'An error happened' );
 }
 
+function createTestingFloor() {
+    // note: 4x4 checkboard pattern scaled so that each square is 25 by 25 pixels.
+    var floorTexture = new THREE.TextureLoader().load('images/checkerboard.jpg')
+    floorTexture.wrapS = floorTexture.wrapT = THREE.RepeatWrapping
+    floorTexture.repeat.set(20, 20)
+    // DoubleSide: render floorTexture on both sides of mesh
+    var floorMaterial = new THREE.MeshBasicMaterial({ map: floorTexture, side: THREE.DoubleSide })
+    var floorGeometry = new THREE.PlaneGeometry(1000, 1000, 1, 1)
+    var floor = new THREE.Mesh(floorGeometry, floorMaterial)
 
+    // Roto el tablero adecuadamente
+    floor.rotation.x = Math.PI / 2
+    scene.add(floor)
+}
 
 
 
