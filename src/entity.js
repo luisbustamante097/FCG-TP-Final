@@ -33,6 +33,8 @@ function createMainShipBullet() {
     var originPoint = mainShip.position.clone()
     bullet.position.copy(originPoint)
     scene.add( bullet )
+    // Lo agrego a la lista de cosas que colisionan de los enemies
+    bulletsList.push(bullet)
     return bullet
 }
 
@@ -49,8 +51,7 @@ function createEnemies() {
     
     function createEnemiesInRow() {
         for (let i = 0; i < inRow; i++) {
-            var enemy = createAnEnemy(new THREE.Vector3(initialX + xIncr, initialY, initialZ + zIncr))
-            enemySpaceshipsList.push(enemy)
+            createAnEnemy(new THREE.Vector3(initialX + xIncr, initialY, initialZ + zIncr))
             xIncr += 40   
         }
     }
@@ -74,10 +75,12 @@ function createAnEnemy(position) {
             enemy.position.copy(position)
             enemy.scale.set(size,size,size)
             
+            // Lo agrego a la lista de enemigos
+            enemySpaceshipsList.push(enemy)
+            
             scene.add( enemy )
         }, onProgress, onError
     );
-    return enemy
 }
 
 function removeEntity(mesh) {

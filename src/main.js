@@ -25,9 +25,6 @@ var bulletsList = []
 //* Lista de naves enemigas
 var enemySpaceshipsList = []
 
-//* Lista de Colliders de todas las naves enemigas
-var collidableMeshesList_enemySpaceship =[]
-
 
 
 init();
@@ -47,10 +44,11 @@ function init(){
 	// Agregamos camara a la escena
 	scene.add(camera);
 
-    // Seteo la posición de la camara
-	camera.position.set(0,100,400);
-    // Rotates the object to face a point in world space.
-	// camera.lookAt(scene.position);	
+    // Seteo la posición de la camara mirando a la escena
+	camera.lookAt(scene.position);	
+    // La acomodo de acuerdo a como queremos el juego
+	camera.position.set(0,200,400);
+	camera.rotation.x -= 2*Math.PI/8
     
     //---------------------INICIALIZAR RENDERER---------------------
     renderer = new THREE.WebGLRenderer({ antialias: true})
@@ -206,7 +204,7 @@ function update() {
     
     //---------------Disparar bullets
     if ( keyboard.down("space") ){
-        bulletsList.push(createMainShipBullet())
+        createMainShipBullet()
     }
         
     //---------------Tests
@@ -258,6 +256,16 @@ function update() {
         appendText(" Hit ");
     }
     checkIfCollides(mainShip, test, collidableMeshesList_mainShip)
+    
+    
+    function bulletCollisionHandler(enemy) {
+        enemy.material.color.setHex(0xff0000)
+    }
+    
+    // Chequeo si las bullets de la mainShip colisionan
+    enemySpaceshipsList.forEach(enemy => {
+        checkIfCollides(enemy, bulletCollisionHandler, bulletsList)
+    });
     
     
     //!######################################################################
