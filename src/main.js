@@ -25,6 +25,8 @@ var bulletsList = []
 //* Lista de naves enemigas
 var enemySpaceshipsList = []
 
+//* Flag para evitar que se empieze usar el mainShip antes de que este su modelo cargado
+var waitToStart = 10
 
 
 init();
@@ -175,9 +177,12 @@ function init(){
 function animate() 
 {
     requestAnimationFrame( animate )
-	render()	
-	update()
+	render()
     
+    // Fix para no animar por 10 ciclos, mientras se terminan de cargar los modelos
+    if (waitToStart != 0) waitToStart -= 1;
+    else update();
+    // TODO: Mejorar! Porque esta atado con alambres
 }
 
 function update() {
