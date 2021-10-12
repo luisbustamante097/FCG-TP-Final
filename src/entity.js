@@ -38,50 +38,70 @@ function createMainShipBullet() {
     return bullet
 }
 
-function createEnemies() {    
+async function createEnemies() {    
     var initialX = -200, initialY = 10, initialZ = -400
     var xIncr = 0, zIncr = 0
     var xStep = 40, zStep = 40
     var inRow = 12, inCols = 5
     
+    var enemyMaterial = new THREE.MeshStandardMaterial( { color: 0x00ff00 })
+    
+    var enemy = await createAnEnemy( enemyMaterial )
+    
     for (let i = 0; i < inCols; i++) {
-        createEnemiesInRow()
+        createEnemiesInRow(enemy)
         zIncr += xStep
         xIncr = 0
     }
     
-    function createEnemiesInRow() {
+    function createEnemiesInRow(enemy) {
         for (let i = 0; i < inRow; i++) {
-            createAnEnemy(new THREE.Vector3(initialX + xIncr, initialY, initialZ + zIncr))
+            // console.log(enemy)
+            clonedEnemy = new THREE.Mesh ( enemy.geometry, enemyMaterial.clone() )
+            clonedEnemy.position.copy(new THREE.Vector3(initialX + xIncr, initialY, initialZ + zIncr))
+            clonedEnemy.scale.set(100,100,100)
+            enemySpaceshipsList.push(clonedEnemy)
+            scene.add( clonedEnemy )
+            // createAnEnemy(new THREE.Vector3(initialX + xIncr, initialY, initialZ + zIncr), enemyMaterial)
             xIncr += zStep   
         }
     }
+    console.log(enemySpaceshipsList)
 }
 
-function createAnEnemy(position) {
+async function createAnEnemy(enemyMaterial) {
     var enemy
     var size = 100
     const loader = new THREE.OBJLoader()
+    function load(object) {
+        // El children[0] del object es el mesh que necesitamos
+        var enemyMesh = object.children[0]
+        enemyGeometry = enemyMesh.geometry
+        
+        enemy = new THREE.Mesh ( enemyGeometry, enemyMaterial )
+        
+        // Inicializo tamaño y posicion
+        // enemy.position.copy(position)
+        // enemy.scale.set(size,size,size)
+        
+        // Lo agrego a la lista de enemigos
+        // enemySpaceshipsList.push(enemy)
+        
+        // scene.add( enemy )
+    }
     
-    loader.load(
-        'models/enemy_spaceship/spaceship.obj',
-        function ( object ) {
-            // El children[0] del object es el mesh que necesitamos
-            var enemyMesh = object.children[0]
-            enemyGeometry = enemyMesh.geometry
-            var enemyMaterial = new THREE.MeshStandardMaterial( { color: 0x00ff00 })
-            enemy = new THREE.Mesh ( enemyGeometry, enemyMaterial )
-            
-            // Inicializo tamaño y posicion
-            enemy.position.copy(position)
-            enemy.scale.set(size,size,size)
-            
-            // Lo agrego a la lista de enemigos
-            enemySpaceshipsList.push(enemy)
-            
-            scene.add( enemy )
-        }, onProgress, onError
-    );
+    
+    async function fun (){ 
+        return new Promise((resolve) => {
+        loader.load(
+            'models/enemy_spaceship/spaceship.obj',
+            ( object ) => resolve(load(object)), onProgress, onError
+        );
+        });
+    }
+    await fun();
+    console.log(enemy.geometry)
+    return enemy
 }
 
 function removeEntity(mesh) {

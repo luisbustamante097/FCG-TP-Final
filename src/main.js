@@ -31,7 +31,7 @@ var waitToStart = 10
 init();
 animate();
 
-function init(){
+async function init(){
     //####################################################################
     //---------------------------INICIALIZACION---------------------------
     //####################################################################
@@ -208,7 +208,7 @@ function update() {
             //---Movimiento
             bullet.position.z -= 1
             //---Destruccion por default
-            if ( Math.abs(mainShip.position.z - bullet.position.z) > FAR/20 ) {
+            if ( Math.abs(mainShip.position.z - bullet.position.z) > FAR/2 ) {
                 removeEntity(bullet)
                 bulletsList.splice(i,1)
                 i--
