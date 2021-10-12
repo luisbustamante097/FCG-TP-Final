@@ -44,64 +44,68 @@ async function createEnemies() {
     var xStep = 40, zStep = 40
     var inRow = 12, inCols = 5
     
+    // Creo el material que van a usar todos los enemies de color verde
     var enemyMaterial = new THREE.MeshStandardMaterial( { color: 0x00ff00 })
     
-    var enemy = await createAnEnemy( enemyMaterial )
+    // Cargo el .obj de las naves asincronicamente (es decir esperando a que termine)
+    var enemyGeometry = await loadEnemyGeometry()
+    // Con esto me aseguro que la variable enemy va a tener al mesh correcto en este punto
     
+    //--- Loops para crear los enemigos como una matriz
     for (let i = 0; i < inCols; i++) {
-        createEnemiesInRow(enemy)
+        createEnemiesInRow(enemyGeometry)
         zIncr += xStep
         xIncr = 0
     }
     
-    function createEnemiesInRow(enemy) {
+    function createEnemiesInRow() {
         for (let i = 0; i < inRow; i++) {
-            // console.log(enemy)
-            clonedEnemy = new THREE.Mesh ( enemy.geometry, enemyMaterial.clone() )
-            clonedEnemy.position.copy(new THREE.Vector3(initialX + xIncr, initialY, initialZ + zIncr))
-            clonedEnemy.scale.set(100,100,100)
-            enemySpaceshipsList.push(clonedEnemy)
-            scene.add( clonedEnemy )
-            // createAnEnemy(new THREE.Vector3(initialX + xIncr, initialY, initialZ + zIncr), enemyMaterial)
+            createAnEnemy()
             xIncr += zStep   
         }
+    }
+    
+    function createAnEnemy() {
+        var size = 100
+        // Creo un nuevo enemigo con la geometry cargada, y clonando el material
+        clonedEnemy = new THREE.Mesh ( enemyGeometry, enemyMaterial.clone() )
+        // Ajusto tamaño y posicion
+        clonedEnemy.scale.set(size,size,size)
+        clonedEnemy.position.copy(new THREE.Vector3(initialX + xIncr, initialY, initialZ + zIncr))
+        // Lo agrego a la lista de enemigos
+        enemySpaceshipsList.push(clonedEnemy)
+        
+        scene.add( clonedEnemy )
     }
     console.log(enemySpaceshipsList)
 }
 
-async function createAnEnemy(enemyMaterial) {
-    var enemy
-    var size = 100
-    const loader = new THREE.OBJLoader()
-    function load(object) {
-        // El children[0] del object es el mesh que necesitamos
-        var enemyMesh = object.children[0]
-        enemyGeometry = enemyMesh.geometry
-        
-        enemy = new THREE.Mesh ( enemyGeometry, enemyMaterial )
-        
-        // Inicializo tamaño y posicion
-        // enemy.position.copy(position)
-        // enemy.scale.set(size,size,size)
-        
-        // Lo agrego a la lista de enemigos
-        // enemySpaceshipsList.push(enemy)
-        
-        // scene.add( enemy )
+async function loadEnemyGeometry() {
+    var enemyGeometry
+    const loader = new THREE.OBJLoader();
+    
+    // Funcion normal para buscar el mesh del object cargado (solo me quedo con el geometry)
+    function geometryLoader(object) {
+        object.traverse( 
+            ( child ) => { if ( child.isMesh ) enemyGeometry = child.geometry; }
+        )
     }
-    
-    
-    async function fun (){ 
+    // Funcion para la carga de un .obj, mezclado con la sintaxis de un llamado asincronico (promise/resolve)
+    async function geometryAsyncLoader (){
         return new Promise((resolve) => {
-        loader.load(
-            'models/enemy_spaceship/spaceship.obj',
-            ( object ) => resolve(load(object)), onProgress, onError
-        );
+            loader.load(
+                'models/enemy_spaceship/spaceship.obj',
+                ( object ) => resolve( geometryLoader(object) ),
+                onProgress, onError
+            );
         });
     }
-    await fun();
-    console.log(enemy.geometry)
-    return enemy
+    
+    await geometryAsyncLoader();
+    // ---- Idea de la solucion: https://discourse.threejs.org/t/how-to-deal-with-async-loader/15861/5
+    // Hago un lio solo para que en este punto exacto el enemyGeometry este correctamente cargado
+    //  si no lo hiciera asi, el enemyGeometry quedaría en undefined, puesto que la carga se tarda un poco
+    return enemyGeometry
 }
 
 function removeEntity(mesh) {
