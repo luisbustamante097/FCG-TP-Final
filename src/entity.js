@@ -1,28 +1,30 @@
 //? Aca vamos a poner los metodos de creacion de objetos
 
 function createMainShip() {
-    //-------TEMPLATE COPIADO DE LA PAGINA DE THREE.JS   
-    // Instantiate a loader
-    const loader = new THREE.GLTFLoader();
-    // Load a glTF resource
-    loader.load(
-        // resource URL
-        'models/lowpoly_spaceship/scene.gltf',
-        // called when the resource is loaded
-        function ( gltf ) {
-            // Busco el mesh del gltf
-            gltf.scene.traverse( function ( child ) {
-                if ( child.isMesh ) mainShip = child;
-            })
-            
-            // Inicializo tamaño y posicion
-            mainShip.position.set(0,10,0)
-            mainShip.scale.set(3,3,3)
-            mainShip.rotation.y = Math.PI;
-            
-            scene.add( mainShip );
-        }, onProgress, onError
-    );
+    
+    const manager = new THREE.LoadingManager();
+    new THREE.MTLLoader( manager )
+        .setPath( 'models/lowpoly_spaceship/' )
+        .load( 'mainship.mtl', function ( materials ) {
+            materials.preload();
+            console.log(materials)
+            new THREE.OBJLoader( manager )
+                .setMaterials( materials )
+                .setPath( 'models/lowpoly_spaceship/' )
+                .load( 'mainship.obj',
+                    function ( object ) {
+                        object.traverse( 
+                            ( child ) => { if ( child.isMesh ) mainShip = child; }
+                        )
+                        mainShip.scale.set(200,200,200)
+                        mainShip.position.set(0,10,0)
+                        mainShip.rotation.y = Math.PI;
+                        
+                        scene.add( mainShip );
+                    }, onProgress, onError  
+                );
+        }, onProgress, onError);
+
 }
 
 function createMainShipBullet() {
