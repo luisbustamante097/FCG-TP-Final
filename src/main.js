@@ -206,7 +206,7 @@ function update() {
         for (let i = 0; i < bulletsList.length; i++) {
             bullet = bulletsList[i]
             //---Movimiento
-            bullet.position.z -= 1
+            bullet.position.z -= 2
             //---Destruccion por default
             if ( Math.abs(mainShip.position.z - bullet.position.z) > FAR/2 ) {
                 removeEntity(bullet)

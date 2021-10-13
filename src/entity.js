@@ -1,30 +1,33 @@
 //? Aca vamos a poner los metodos de creacion de objetos
 
-function createMainShip() {
-    
-    const manager = new THREE.LoadingManager();
-    new THREE.MTLLoader( manager )
-        .setPath( 'models/lowpoly_spaceship/' )
-        .load( 'mainship.mtl', function ( materials ) {
-            materials.preload();
-            console.log(materials)
-            new THREE.OBJLoader( manager )
-                .setMaterials( materials )
-                .setPath( 'models/lowpoly_spaceship/' )
-                .load( 'mainship.obj',
-                    function ( object ) {
-                        object.traverse( 
-                            ( child ) => { if ( child.isMesh ) mainShip = child; }
-                        )
-                        mainShip.scale.set(200,200,200)
-                        mainShip.position.set(0,10,0)
-                        mainShip.rotation.y = Math.PI;
-                        
-                        scene.add( mainShip );
-                    }, onProgress, onError  
-                );
-        }, onProgress, onError);
+const onProgress = ( xhr ) => console.log( ( xhr.loaded / xhr.total * 100 ) + '% loaded' );
+const onError = ( error ) => console.log( 'An error happened' );
 
+function createMainShip() {
+    // Template para carga de OBJ + MTL
+    const manager = new THREE.LoadingManager();
+    const MTLLoader = new THREE.MTLLoader( manager )
+    MTLLoader.load(
+        'models/lowpoly_spaceship/mainship.mtl',
+        ( materials ) => {
+            materials.preload()
+            
+            const OBJLoader = new THREE.OBJLoader( manager )
+            OBJLoader.setMaterials( materials )
+            OBJLoader.load( 
+                'models/lowpoly_spaceship/mainship.obj',
+                ( object ) => {
+                    object.traverse( ( child ) => { if ( child.isMesh ) mainShip = child } )
+                    
+                    // Seteo la posicion de la mainship
+                    mainShip.scale.set(200,200,200)
+                    mainShip.position.set(0,10,0)
+                    mainShip.rotation.y = Math.PI
+                    
+                    scene.add( mainShip )
+                }
+            );
+        }, onProgress, onError);
 }
 
 function createMainShipBullet() {
@@ -117,12 +120,6 @@ function removeEntity(mesh) {
     scene.remove( object );
 }
 
-const onProgress = function ( xhr ) {
-    console.log( ( xhr.loaded / xhr.total * 100 ) + '% loaded' );
-}
-const onError = function ( error ) {
-    console.log( 'An error happened' );
-}
 
 function createTestingFloor() {
     // note: 4x4 checkboard pattern scaled so that each square is 25 by 25 pixels.
@@ -147,28 +144,6 @@ function createTestingFloor() {
 //!---------------------------CODIGO AUXILIAR--------------------------------
 //!--------------------------------------------------------------------------
 
-function createWithMTLAndOBJ() {
-    const manager = new THREE.LoadingManager();
-    new THREE.MTLLoader( manager )
-        .setPath( 'models/example/' )
-        .load( 'Handgun_obj.mtl', function ( materials ) {
-            materials.preload();
-            console.log(materials)
-            new THREE.OBJLoader( manager )
-                .setMaterials( materials )
-                .setPath( 'models/example/' )
-                .load( 'Handgun_obj.obj',
-                    function ( object ) {
-                        // // El children[0] del object es el mesh que necesitamos
-                        // mainShip = object.children[0]
-                        object.scale.set(20,20,20)
-                        
-                        scene.add( object );
-                    }, onProgress, onError  
-                );
-        }, onProgress, onError);
-
-}
 
 // Este codigo es para crear una caja normal como mainship
 function createBox() {
