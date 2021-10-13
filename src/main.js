@@ -272,7 +272,7 @@ function checkIfCollides(object, handler, collidableMeshesListOfObject) {
     var position = object.geometry.attributes.position
     var localVertex = new THREE.Vector3()
     
-    for (var vertexIndex = 0; vertexIndex < position.count/2; vertexIndex += 2)
+    for (var vertexIndex = 0; vertexIndex < position.count; vertexIndex ++)
     {	
         localVertex.fromBufferAttribute( position, vertexIndex )
         var globalVertex = localVertex.applyMatrix4( object.matrix )
