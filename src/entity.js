@@ -121,21 +121,6 @@ function removeEntity(mesh) {
 }
 
 
-function createTestingFloor() {
-    // note: 4x4 checkboard pattern scaled so that each square is 25 by 25 pixels.
-    var floorTexture = new THREE.TextureLoader().load('images/checkerboard.jpg')
-    floorTexture.wrapS = floorTexture.wrapT = THREE.RepeatWrapping
-    floorTexture.repeat.set(20, 20)
-    // DoubleSide: render floorTexture on both sides of mesh
-    var floorMaterial = new THREE.MeshBasicMaterial({ map: floorTexture, side: THREE.DoubleSide })
-    var floorGeometry = new THREE.PlaneGeometry(1000, 1000, 1, 1)
-    var floor = new THREE.Mesh(floorGeometry, floorMaterial)
-
-    // Roto el tablero adecuadamente
-    floor.rotation.x = Math.PI / 2
-    scene.add(floor)
-}
-
 
 
 

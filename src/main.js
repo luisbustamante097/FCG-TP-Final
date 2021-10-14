@@ -77,8 +77,10 @@ async function init(){
     scene.add( pointLight );
     
     //#################################//
-    //------------- FLOOR -------------//
-	createTestingFloor()
+    //------------- GRID -------------//
+    //TODO: Sacar cuando ya no se necesite
+    var gridHelper = new THREE.GridHelper( 1000, 20 ); // Cells of 50px
+    scene.add( gridHelper );
     
     //####################################//
 	//------------- CONTROLS -------------//
