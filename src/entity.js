@@ -82,7 +82,6 @@ async function createEnemies() {
         
         scene.add( clonedEnemy )
     }
-    console.log(enemySpaceshipsList)
 }
 
 async function loadEnemyGeometry() {

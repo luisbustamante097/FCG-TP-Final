@@ -178,9 +178,8 @@ function update() {
     //##########################################################
     
     //---------------Movimiento del objeto
-    var speed = 150
+    var speed = 200
 	var moveDistance = speed * clock.getDelta()
-    
     var moving = false
 
 	if ( keyboard.pressed("A") || keyboard.pressed("left") ){
@@ -212,6 +211,8 @@ function update() {
     //###########################
     //-------Movimiento de camara
     cameraMovement(moving)
+    
+    
     
     //##############################################
     //-------Movimiento y destruccion de los bullets
