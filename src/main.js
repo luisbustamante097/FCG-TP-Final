@@ -27,6 +27,8 @@ var enemySpaceshipsList = []
 //* Flag para evitar que se empieze usar el mainShip antes de que este su modelo cargado
 var waitToStart = 10
 
+//* Wait stack de movimientos de la camara
+var cameraMovementsStack = []
 
 init();
 animate();
@@ -178,13 +180,22 @@ function update() {
     //---------------Movimiento del objeto
     var speed = 150
 	var moveDistance = speed * clock.getDelta()
+    
+    var moving = false
+    var steps = 3
+    var stepsForStop = 2
+    var stepsForMoving = 2
 
-	if ( keyboard.pressed("A") || keyboard.pressed("left") )
+	if ( keyboard.pressed("A") || keyboard.pressed("left") ){
 	    mainShip.position.x -= moveDistance
-		
-	if ( keyboard.pressed("D") || keyboard.pressed("right") )
+        cameraFollow(-moveDistance)
+        moving = true
+    }
+	if ( keyboard.pressed("D") || keyboard.pressed("right") ){
         mainShip.position.x += moveDistance
-        
+        cameraFollow(+moveDistance)
+        moving = true
+    }
 	if ( keyboard.pressed("W") || keyboard.pressed("up") )      //TODO: Quitar
 	    mainShip.position.z -= moveDistance
 		
@@ -200,6 +211,68 @@ function update() {
     //##########################################################
     //------------------------ KEYBOARD ------------------------
     //##########################################################
+    
+    // ---TESTING
+    
+    function cameraFollow(moveDistance) {
+        for (let i = 0; i < steps; i++) {
+            cameraMovementsStack.push(moveDistance/steps)
+        }
+        for (let i = 0; i < stepsForMoving; i++) {
+            var steppedMovement = cameraMovementsStack.pop()
+            camera.position.x += steppedMovement
+        }
+        // console.log(cameraMovementsStack.length)
+        
+        
+        
+        // camera.position.x += moveDistance
+    }
+    if (moving==false) {
+        if (inBigRadious()){
+            cameraMovementsStack = []
+            // camera.position.x = mainShip.position.x
+            
+            var posDiff = camera.position.x - mainShip.position.x
+            // console.log(posDiff)
+            var aux = 0
+            
+            if (inLittleRadious()) {
+                cameraMovementsStack = []
+                camera.position.x = mainShip.position.x
+            }else{
+                while (aux < Math.abs(posDiff)) {
+                    aux ++
+                    if (posDiff <0){
+                        cameraMovementsStack.push(stepsForStop)
+                    }else{
+                        cameraMovementsStack.push(-stepsForStop)
+                    }
+                }
+            }
+            // camera.position.x = mainShip.position.x
+        }
+        if(cameraMovementsStack.length != 0){
+            for (let i = 0; i < stepsForStop; i++) {
+                if(cameraMovementsStack.length == 0) break;
+                var steppedMovement = cameraMovementsStack.pop()
+                camera.position.x += steppedMovement
+                // console.log(cameraMovementsStack.length)
+            }
+        }
+        
+    }
+    
+    function inBigRadious() {
+        var radious = 50
+        return (Math.abs(camera.position.x - mainShip.position.x) < radious)
+    }
+    function inLittleRadious() {
+        var radious = 5
+        return (Math.abs(camera.position.x - mainShip.position.x) < radious)
+    }
+    
+    
     
     
     //##############################################
