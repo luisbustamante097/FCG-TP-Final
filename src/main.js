@@ -182,18 +182,15 @@ function update() {
 	var moveDistance = speed * clock.getDelta()
     
     var moving = false
-    var steps = 3
-    var stepsForStop = 2
-    var stepsForMoving = 2
 
 	if ( keyboard.pressed("A") || keyboard.pressed("left") ){
 	    mainShip.position.x -= moveDistance
-        cameraFollow(-moveDistance)
+        saveMovementsFromMainship(-moveDistance)
         moving = true
     }
 	if ( keyboard.pressed("D") || keyboard.pressed("right") ){
         mainShip.position.x += moveDistance
-        cameraFollow(+moveDistance)
+        saveMovementsFromMainship(+moveDistance)
         moving = true
     }
 	if ( keyboard.pressed("W") || keyboard.pressed("up") )      //TODO: Quitar
@@ -212,68 +209,9 @@ function update() {
     //------------------------ KEYBOARD ------------------------
     //##########################################################
     
-    // ---TESTING
-    
-    function cameraFollow(moveDistance) {
-        for (let i = 0; i < steps; i++) {
-            cameraMovementsStack.push(moveDistance/steps)
-        }
-        for (let i = 0; i < stepsForMoving; i++) {
-            var steppedMovement = cameraMovementsStack.pop()
-            camera.position.x += steppedMovement
-        }
-        // console.log(cameraMovementsStack.length)
-        
-        
-        
-        // camera.position.x += moveDistance
-    }
-    if (moving==false) {
-        if (inBigRadious()){
-            cameraMovementsStack = []
-            // camera.position.x = mainShip.position.x
-            
-            var posDiff = camera.position.x - mainShip.position.x
-            // console.log(posDiff)
-            var aux = 0
-            
-            if (inLittleRadious()) {
-                cameraMovementsStack = []
-                camera.position.x = mainShip.position.x
-            }else{
-                while (aux < Math.abs(posDiff)) {
-                    aux ++
-                    if (posDiff <0){
-                        cameraMovementsStack.push(stepsForStop)
-                    }else{
-                        cameraMovementsStack.push(-stepsForStop)
-                    }
-                }
-            }
-            // camera.position.x = mainShip.position.x
-        }
-        if(cameraMovementsStack.length != 0){
-            for (let i = 0; i < stepsForStop; i++) {
-                if(cameraMovementsStack.length == 0) break;
-                var steppedMovement = cameraMovementsStack.pop()
-                camera.position.x += steppedMovement
-                // console.log(cameraMovementsStack.length)
-            }
-        }
-        
-    }
-    
-    function inBigRadious() {
-        var radious = 50
-        return (Math.abs(camera.position.x - mainShip.position.x) < radious)
-    }
-    function inLittleRadious() {
-        var radious = 5
-        return (Math.abs(camera.position.x - mainShip.position.x) < radious)
-    }
-    
-    
-    
+    //###########################
+    //-------Movimiento de camara
+    cameraMovement(moving)
     
     //##############################################
     //-------Movimiento y destruccion de los bullets
