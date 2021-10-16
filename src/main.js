@@ -230,8 +230,34 @@ function update() {
         }
     }
     
+    //##########################################################
+    //---------------------- COLLISIONS ------------------------
+    //##########################################################
     
+    function mainShipCollisionHandler() {
+        // Nada por lo pronto
+    }
+    checkIfCollides(mainShip, mainShipCollisionHandler, collidableMeshesList_mainShip)
+    
+    function bulletCollisionHandler(enemy, collisionResults) {
+        // Remuevo la nave y la saco de la lista de naves
+        removeEntity(enemy)
+        var index = enemySpaceshipsList.indexOf(enemy)
+        if (index !== -1) { enemySpaceshipsList.splice(index, 1) }
+        
+        // Obtengo el bullet que mato a la nave, lo remuevo, y lo saco de su lista
+        var bullet = collisionResults[0].object
+        removeEntity(bullet) 
+        var index = bulletsList.indexOf(bullet)
+        if (index !== -1) { bulletsList.splice(index, 1) }
+    }
+    
+    // Chequeo si las bullets de la mainShip colisionan
+    enemySpaceshipsList.forEach(enemy => {
+        checkIfCollides(enemy, bulletCollisionHandler, bulletsList)
+    });
 
+    
     //!######################################################################
     //!-----------------------------TESTING----------------------------------
     //!######################################################################
@@ -241,26 +267,6 @@ function update() {
     // cube.rotation.x += 0.02;
     wireframeCube.rotation.x -= 0.01;
     wireframeCube.rotation.y -= 0.01;
-    
-    
-    
-    
-    //CODIGO PARA QUE EL CUBO SEPA QUE HACER AL COLLISIONAR
-    function mainShipCollisionHandler() {
-        // Nada por lo pronto
-    }
-    checkIfCollides(mainShip, mainShipCollisionHandler, collidableMeshesList_mainShip)
-    
-    
-    function bulletCollisionHandler(enemy) {
-        enemy.material.color.setHex(0xff0000)
-    }
-    
-    // Chequeo si las bullets de la mainShip colisionan
-    enemySpaceshipsList.forEach(enemy => {
-        checkIfCollides(enemy, bulletCollisionHandler, bulletsList)
-    });
-    
     
     //!######################################################################
     //!-----------------------------TESTING----------------------------------
@@ -295,7 +301,8 @@ function checkIfCollides(object, handler, collidableMeshesListOfObject) {
         var ray = new THREE.Raycaster( originPoint, directionVector.clone().normalize() )
         var collisionResults = ray.intersectObjects( collidableMeshesListOfObject )
         if ( collisionResults.length > 0 && collisionResults[0].distance < directionVector.length() ) {
-            handler(object)
+            handler(object, collisionResults)
+            break;
         }
     }	
 }

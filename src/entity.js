@@ -40,7 +40,6 @@ function createMainShipBullet() {
     scene.add( bullet )
     // Lo agrego a la lista de cosas que colisionan de los enemies
     bulletsList.push(bullet)
-    return bullet
 }
 
 async function createEnemies() {    
