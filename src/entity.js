@@ -117,30 +117,3 @@ function removeEntity(mesh) {
     object.material.dispose();
     scene.remove( object );
 }
-
-
-
-
-
-//TODO: Sacar cuando terminemos
-//!--------------------------------------------------------------------------
-//!---------------------------CODIGO AUXILIAR--------------------------------
-//!--------------------------------------------------------------------------
-
-
-// Este codigo es para crear una caja normal como mainship
-function createBox() {
-    // Geometry: Box
-    var geometry = new THREE.BoxGeometry( 20, 20, 20)
-    // Material: Standard
-    var material = new THREE.MeshStandardMaterial( { color: 0xff0051 })
-    // Mesh: geometry + material
-    mainShip = new THREE.Mesh ( geometry, material )
-    mainShip.position.set(0,10,250)
-    // Lo agrego a la escena
-    scene.add( mainShip )
-} 
-
-//!--------------------------------------------------------------------------
-//!---------------------------CODIGO AUXILIAR--------------------------------
-//!--------------------------------------------------------------------------

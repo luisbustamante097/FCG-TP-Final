@@ -64,11 +64,9 @@ async function init(){
     //####################################################################
     //---------------------------INICIALIZACION---------------------------
     //####################################################################
-    
-    
+        
     //##################################//
     //------------- LIGHTS -------------//
-    
     //----Creo Luz de Ambiente
     var ambientLight = new THREE.AmbientLight ( 0xffffff, 0.5)
     scene.add( ambientLight )
@@ -78,33 +76,10 @@ async function init(){
     pointLight.position.set( 25, 50, 25 );
     scene.add( pointLight );
     
-    //#################################//
-    //------------- GRID -------------//
-    //TODO: Sacar cuando ya no se necesite
-    var gridHelper = new THREE.GridHelper( 1000, 20 ); // Cells of 50px
-    scene.add( gridHelper );
-    
-    //####################################//
-	//------------- CONTROLS -------------//
-    //TODO: Sacar cuando ya no se necesite
-	// controls = new THREE.OrbitControls( camera, renderer.domElement )
-    // controls.update();
-    
-    //################################//
-    //------------- AXES -------------//
-    //TODO: Sacar cuando ya no se necesite
-    const axesHelper = new THREE.AxesHelper(100)
-    scene.add( axesHelper )
-    
-    //#################################//
-    //------------- STATS -------------//
-    //TODO: Sacar cuando ya no se necesite
-	// displays current and past frames per second attained by scene
-	stats = new Stats();
-	stats.domElement.style.position = 'absolute';
-	stats.domElement.style.bottom = '0px';
-	stats.domElement.style.zIndex = 100;
-	document.body.appendChild( stats.domElement );
+    //###################################//
+    //------------- TESTING -------------//
+    //TODO: Comentar cuando ya no se necesite
+    initTesting()
     
     //##################################//
     //------------- SKYBOX -------------//
@@ -120,48 +95,17 @@ async function init(){
     ])
     scene.background = skybox_texture
     
-    
     //####################################//
-    //------------- GEOMETRY -------------//
-        
+    //------------- ENTITIES -------------//
     //----Creo main ship
     createMainShip()
-    
     //----Creo las naves enemigas
     createEnemies()
     
-    //----Creo Wireframe Cube   //TODO: Sacar cuando no se necesite
-    var geometry = new THREE.BoxGeometry( 50, 50, 50)
-    var material = new THREE.MeshBasicMaterial( { wireframe: true })
-    wireframeCube = new THREE.Mesh ( geometry, material )
-    wireframeCube.position.set(0,30,-500)
-    scene.add( wireframeCube )
-    
-    
-    
-    //!######################################################################
-    //!-----------------------------TESTING----------------------------------
-    //!######################################################################
-    
-    //---------------------Creo dos Muros que collisionan
-	
-	var wallGeometry = new THREE.BoxGeometry( 100, 100, 20, 1, 1, 1 );
-	var wallMaterial = new THREE.MeshStandardMaterial( {color: 0x8888ff} );
-	
-	var wall = new THREE.Mesh(wallGeometry, wallMaterial);
-	wall.position.set(-200, 50, 0);
-	wall.rotation.y = 3.14159 / 2;
-	scene.add(wall);
-	collidableMeshesList_mainShip.push(wall); // <-- Lo agrego a la lista de cosas que colisionan
-
-    //!######################################################################
-    //!-----------------------------TESTING----------------------------------
-    //!######################################################################
 }
 
 //Funcion para animar (60 FPS)
-function animate() 
-{
+function animate() {
     requestAnimationFrame( animate )
 	render()
     
@@ -171,13 +115,12 @@ function animate()
     // TODO: Mejorar! Porque esta atado con alambres
 }
 
+function render() {	renderer.render( scene, camera ) }
+
 function update() {
     
-    //##########################################################
-    //------------------------ KEYBOARD ------------------------
-    //##########################################################
-    
-    //---------------Movimiento del objeto
+    //########################################//
+    //--------------- KEYBOARD ---------------//
     var speed = 200
 	var moveDistance = speed * clock.getDelta()
     var moving = false
@@ -202,20 +145,14 @@ function update() {
     if ( keyboard.down("space") ){
         createMainShipBullet()
     }
-        
-        
-    //##########################################################
-    //------------------------ KEYBOARD ------------------------
-    //##########################################################
     
-    //###########################
-    //-------Movimiento de camara
+    //#########################################//
+    //------------ CAMERA MOVEMENT ------------//
     cameraMovement(moving)
     
-    
-    
-    //##############################################
-    //-------Movimiento y destruccion de los bullets
+    //##########################################//
+    //------------ BULLET BEHAVIOUR ------------//
+    //--- Movimiento y destruccion de los bullets
     if (bulletsList.length !== 0) {
         for (let i = 0; i < bulletsList.length; i++) {
             bullet = bulletsList[i]
@@ -230,79 +167,19 @@ function update() {
         }
     }
     
-    //##########################################################
-    //---------------------- COLLISIONS ------------------------
-    //##########################################################
-    
-    function mainShipCollisionHandler() {
-        // Nada por lo pronto
-    }
+    //##########################################//
+    //--------------- COLLISIONS ---------------//
+    //--- Collisiones de la main ship
     checkIfCollides(mainShip, mainShipCollisionHandler, collidableMeshesList_mainShip)
-    
-    function bulletCollisionHandler(enemy, collisionResults) {
-        // Remuevo la nave y la saco de la lista de naves
-        removeEntity(enemy)
-        var index = enemySpaceshipsList.indexOf(enemy)
-        if (index !== -1) { enemySpaceshipsList.splice(index, 1) }
-        
-        // Obtengo el bullet que mato a la nave, lo remuevo, y lo saco de su lista
-        var bullet = collisionResults[0].object
-        removeEntity(bullet) 
-        var index = bulletsList.indexOf(bullet)
-        if (index !== -1) { bulletsList.splice(index, 1) }
-    }
-    
-    // Chequeo si las bullets de la mainShip colisionan
+
+    //--- Chequeo si las bullets de la mainShip colisionan en los enemigos
     enemySpaceshipsList.forEach(enemy => {
         checkIfCollides(enemy, bulletCollisionHandler, bulletsList)
     });
-
     
-    //!######################################################################
-    //!-----------------------------TESTING----------------------------------
-    //!######################################################################
-    
-    //------CUBOS QUE GIRAN
-    // mainShip.rotation.y += 0.02;
-    // cube.rotation.x += 0.02;
-    wireframeCube.rotation.x -= 0.01;
-    wireframeCube.rotation.y -= 0.01;
-    
-    //!######################################################################
-    //!-----------------------------TESTING----------------------------------
-    //!######################################################################
-    
-    
-    //----Update del Keyboard
+    //#######################################//
+    //--------------- UPDATES ---------------//
+    //--- Update del Keyboard
     keyboard.update();
-    
-    //----Update de los controles Orbit //TODO: sacar cuando terminemos
-    // controls.update();
-    //----Update de los stats //TODO: sacar cuando terminemos
-    stats.update();
 }
 
-function render() 
-{	
-	renderer.render( scene, camera );
-}
-
-function checkIfCollides(object, handler, collidableMeshesListOfObject) {
-    var originPoint = object.position.clone()
-    var position = object.geometry.attributes.position
-    var localVertex = new THREE.Vector3()
-    
-    for (var vertexIndex = 0; vertexIndex < position.count; vertexIndex ++)
-    {	
-        localVertex.fromBufferAttribute( position, vertexIndex )
-        var globalVertex = localVertex.applyMatrix4( object.matrix )
-        var directionVector = globalVertex.sub( object.position )
-        
-        var ray = new THREE.Raycaster( originPoint, directionVector.clone().normalize() )
-        var collisionResults = ray.intersectObjects( collidableMeshesListOfObject )
-        if ( collisionResults.length > 0 && collisionResults[0].distance < directionVector.length() ) {
-            handler(object, collisionResults)
-            break;
-        }
-    }	
-}
