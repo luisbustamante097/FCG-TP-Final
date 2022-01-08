@@ -181,5 +181,10 @@ function update() {
     //--------------- UPDATES ---------------//
     //--- Update del Keyboard
     keyboard.update();
+    
+    //###################################//
+    //------------- TESTING -------------//
+    //TODO: Comentar cuando ya no se necesite
+    animateTesting();
 }
 
