@@ -199,25 +199,18 @@ function update() {
     var rightShip = lastShipOnRightSide()
     var leftShip = lastShipOnLeftSide()
     
-    if (rightShip == null){
-        debugger
-        // Gano el jugador porque no hay más naves
-    }
-    
-    if (rightShip.position.x > MAP_WIDE_X || leftShip.position.x < -MAP_WIDE_X) {
-        // Cuando llego al borde, cambio de sentido
-        currentSpeed *= -1
-
-        // Hay una pequeña posibilidad de que se trabe al cambiar de sentido,
-        // por lo cual, muevo a todas las naves unos pasos en sentido contrario para evitar el cuelgue
-        enemySpaceshipsList.forEach(enemy => {
-            enemy.position.x += 2 * currentSpeed * delta
-        });
+    if (rightShip == null || leftShip == null){
+        debugger // Si llegó hasta acá es porque el jugador gano al matar todas las naves
     }
     
     enemySpaceshipsList.forEach(enemy => {
         enemy.position.x += currentSpeed * delta
     });
+    
+    if (rightShip.position.x > MAP_WIDE_X || leftShip.position.x < -MAP_WIDE_X) {
+        // Cuando llego al borde, cambio de sentido
+        currentSpeed *= -1
+    }
     
     function lastShipOnRightSide(){
         for (let j = 11; j >= 0; j--) {
