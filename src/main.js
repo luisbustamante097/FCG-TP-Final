@@ -5,7 +5,9 @@ var keyboard = new KeyboardState()
 
 // Clock for smooth movement
 var movementClock = new THREE.Clock()
-
+// Clock for enemy ships movement
+var enemiesClock = new THREE.Clock()
+enemiesClock.start()
 
 //* Atributos para la camara
 const SCREEN_WIDTH  = window.innerWidth
@@ -26,11 +28,19 @@ var bulletsList = []
 //* Lista de naves enemigas
 var enemySpaceshipsList = []
 
+//* Matriz de naves enemigas
+var enemySpaceshipsMatrix
+
 //* Flag para evitar que se empieze usar el mainShip antes de que este su modelo cargado
 var waitToStart = 10
 
 //* Wait stack de movimientos de la camara
 var cameraMovementsStack = []
+
+//? Constantes y variables importantes
+const MAP_WIDE_X = 300
+const INITIAL_SPEED = 50
+var currentSpeed = INITIAL_SPEED
 
 init();
 animate();
@@ -102,8 +112,9 @@ async function init(){
     //----Creo main ship
     createMainShip()
     //----Creo las naves enemigas
-    createEnemies()
-    
+    await createEnemies()
+    // Guardo tambien las naves en formato de matriz
+    enemySpaceshipsMatrix = listToMatrix(enemySpaceshipsList, 12)
 }
 
 //Funcion para animar (60 FPS)
@@ -180,6 +191,55 @@ function update() {
         checkIfCollides(enemy, bulletCollisionHandler, bulletsList)
     });
     
+    //########################################//
+    //--------- ENEMY SHIPS MOVEMENT ---------//
+
+    var delta = enemiesClock.getDelta()
+    
+    var rightShip = lastShipOnRightSide()
+    var leftShip = lastShipOnLeftSide()
+    
+    if (rightShip == null){
+        debugger
+        // Gano el jugador porque no hay más naves
+    }
+    
+    if (rightShip.position.x > MAP_WIDE_X || leftShip.position.x < -MAP_WIDE_X) {
+        // Cuando llego al borde, cambio de sentido
+        currentSpeed *= -1
+
+        // Hay una pequeña posibilidad de que se trabe al cambiar de sentido,
+        // por lo cual, muevo a todas las naves unos pasos en sentido contrario para evitar el cuelgue
+        enemySpaceshipsList.forEach(enemy => {
+            enemy.position.x += 2 * currentSpeed * delta
+        });
+    }
+    
+    enemySpaceshipsList.forEach(enemy => {
+        enemy.position.x += currentSpeed * delta
+    });
+    
+    function lastShipOnRightSide(){
+        for (let j = 11; j >= 0; j--) {
+            for (let i = 4; i >= 0; i--) {
+                if (enemySpaceshipsMatrix[i][j] != null)
+                    return enemySpaceshipsMatrix[i][j]
+            }
+        }
+        return null
+    }
+    function lastShipOnLeftSide(){
+        for (let j = 0; j < 12; j++) {
+            for (let i = 4; i >= 0; i--) {
+                if (enemySpaceshipsMatrix[i][j] != null)
+                    return enemySpaceshipsMatrix[i][j]
+            }
+        }
+        return null
+    }
+
+    
+    
     //#######################################//
     //--------------- UPDATES ---------------//
     //--- Update del Keyboard
@@ -189,5 +249,22 @@ function update() {
     //------------- TESTING -------------//
     //TODO: Comentar cuando ya no se necesite
     animateTesting();
+}
+
+
+
+//#######################################//
+//-------------- UTILITIES --------------//
+
+function listToMatrix(list, elementsPerSubArray) {
+    var matrix = [], i, k;
+    for (i = 0, k = -1; i < list.length; i++) {
+        if (i % elementsPerSubArray === 0) {
+            k++;
+            matrix[k] = [];
+        }
+        matrix[k].push(list[i]);
+    }
+    return matrix;
 }
 

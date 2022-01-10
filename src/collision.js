@@ -25,6 +25,13 @@ function bulletCollisionHandler(enemy, collisionResults) {
     removeEntity(enemy)
     var index = enemySpaceshipsList.indexOf(enemy)
     if (index !== -1) { enemySpaceshipsList.splice(index, 1) }
+    // Tambien la "tacho" en la matriz
+    for (let i = 0; i < 5; i++) {
+        for (let j = 0; j < 12; j++) {
+            if (enemySpaceshipsMatrix[i][j] == enemy)
+                enemySpaceshipsMatrix[i][j] = null
+        }
+    }
     
     // Obtengo el bullet que mato a la nave, lo remuevo, y lo saco de su lista
     var bullet = collisionResults[0].object
