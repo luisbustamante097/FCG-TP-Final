@@ -2,8 +2,10 @@
 var container, scene, camera, renderer, controls, stats
 // Keyboard controller (from KeyboardState.js)
 var keyboard = new KeyboardState()
-// Clock for tracking time
-var clock = new THREE.Clock()
+
+// Clock for smooth movement
+var movementClock = new THREE.Clock()
+
 
 //* Atributos para la camara
 const SCREEN_WIDTH  = window.innerWidth
@@ -121,8 +123,8 @@ function update() {
     
     //########################################//
     //--------------- KEYBOARD ---------------//
-    var speed = 200
-	var moveDistance = speed * clock.getDelta()
+    const SPEED = 250
+	var moveDistance = SPEED * movementClock.getDelta()
     var moving = false
 
 	if ( keyboard.pressed("A") || keyboard.pressed("left") ){
@@ -153,11 +155,12 @@ function update() {
     //##########################################//
     //------------ BULLET BEHAVIOUR ------------//
     //--- Movimiento y destruccion de los bullets
+    const BULLET_SPEED = 3
     if (bulletsList.length !== 0) {
         for (let i = 0; i < bulletsList.length; i++) {
             bullet = bulletsList[i]
             //---Movimiento
-            bullet.position.z -= 2
+            bullet.position.z -= BULLET_SPEED
             //---Destruccion por default
             if ( Math.abs(mainShip.position.z - bullet.position.z) > FAR/2 ) {
                 removeEntity(bullet)

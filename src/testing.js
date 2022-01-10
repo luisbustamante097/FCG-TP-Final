@@ -3,6 +3,16 @@ function initTesting (){
     //------------- GRID -------------//
     var gridHelper = new THREE.GridHelper( 1000, 20 ); // Cells of 50px
     scene.add( gridHelper );
+    const MAP_WIDE = 400
+    // Grids laterales:
+    var grid1 = new THREE.GridHelper( 1000, 20 )
+    grid1.position.set(-MAP_WIDE,500,0)
+    grid1.rotation.z = Math.PI/2
+    scene.add( grid1 )
+    var grid2 = new THREE.GridHelper( 1000, 20 )
+    grid2.position.set(MAP_WIDE,500,0)
+    grid2.rotation.z = Math.PI/2
+    scene.add( grid2 )
 
     //####################################//
     //------------- CONTROLS -------------//
@@ -34,7 +44,7 @@ function initTesting (){
     
     //--- Muro Collisionable
 	var wallGeometry = new THREE.BoxGeometry( 100, 100, 20, 1, 1, 1 );
-	var wallMaterial = new THREE.MeshStandardMaterial( {color: 0x8888ff} );
+	var wallMaterial = new THREE.MeshBasicMaterial( { wireframe: true })
 	
 	var wall = new THREE.Mesh(wallGeometry, wallMaterial);
 	wall.position.set(-200, 50, 0);

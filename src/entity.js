@@ -43,7 +43,7 @@ function createMainShipBullet() {
 }
 
 async function createEnemies() {    
-    var initialX = -200, initialY = 10, initialZ = -400
+    var initialX = -220, initialY = 10, initialZ = -400
     var xIncr = 0, zIncr = 0
     var xStep = 40, zStep = 40
     var inRow = 12, inCols = 5
