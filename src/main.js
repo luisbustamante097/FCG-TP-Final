@@ -34,7 +34,7 @@ var waitToStart = 10
 //* Wait stack de movimientos de la camara
 var cameraMovementsStack = []
 
-//? Constantes y variables importantes
+//* Constantes y variables importantes
 const MAP_WIDE_X = 300
 
 init();

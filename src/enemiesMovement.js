@@ -1,7 +1,9 @@
 //* Variables y constantes para el movimiento de las naves
 const ENEMIES_INITIAL_SPEED = 30
 const ENEMIES_STEP_DOWN = 2
+const ENEMIES_SPEED_INCREASE = 5
 var currentSpeed = ENEMIES_INITIAL_SPEED
+var speedSign = 1
 
 // Clock para movimiento de las naves enemigas
 var enemiesClock = new THREE.Clock()
@@ -13,21 +15,25 @@ function moveEnemies(){
     var leftShip = lastShipOnLeftSide()
     
     enemySpaceshipsList.forEach(enemy => {
-        enemy.position.x += currentSpeed * delta
+        enemy.position.x += speedSign * currentSpeed * delta
     });
     
     if (rightShip.position.x > MAP_WIDE_X || leftShip.position.x < -MAP_WIDE_X) {
         // Cuando llego al borde, cambio de sentido
-        currentSpeed *= -1
+        speedSign *= -1
         enemySpaceshipsList.forEach(enemy => {
             // Hay una pequeña posibilidad de que al cambiar de sentido se trabe la nave
             // Por lo cual, muevo a todas las naves un paso en el sentido contrario para evitar el cuelgue
-            enemy.position.x += currentSpeed * delta
+            enemy.position.x += speedSign * currentSpeed * delta
             
             // Cada que llego al borde tengo que bajar un poco en el eje z
             enemy.position.z += ENEMIES_STEP_DOWN
         });
-        if (rightShip.position.x > MAP_WIDE_X) debugger; //! si entra acá hay error
+        
+        // También debe incrementar la velocidad de a poco
+        currentSpeed += ENEMIES_SPEED_INCREASE
+        
+        if (rightShip.position.x > MAP_WIDE_X) debugger; //! si entra acá hay error (BORRAR AL TERMINAR)
     }
     
     
