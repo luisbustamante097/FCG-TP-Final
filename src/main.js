@@ -3,11 +3,8 @@ var container, scene, camera, renderer, controls, stats
 // Keyboard controller (from KeyboardState.js)
 var keyboard = new KeyboardState()
 
-// Clock for smooth movement
+// Clock para movimiento de la nave principal
 var movementClock = new THREE.Clock()
-// Clock for enemy ships movement
-var enemiesClock = new THREE.Clock()
-enemiesClock.start()
 
 //* Atributos para la camara
 const SCREEN_WIDTH  = window.innerWidth
@@ -39,8 +36,6 @@ var cameraMovementsStack = []
 
 //? Constantes y variables importantes
 const MAP_WIDE_X = 300
-const INITIAL_SPEED = 50
-var currentSpeed = INITIAL_SPEED
 
 init();
 animate();
@@ -193,46 +188,8 @@ function update() {
     
     //########################################//
     //--------- ENEMY SHIPS MOVEMENT ---------//
+    moveEnemies()
 
-    var delta = enemiesClock.getDelta()
-    
-    var rightShip = lastShipOnRightSide()
-    var leftShip = lastShipOnLeftSide()
-    
-    if (rightShip == null || leftShip == null){
-        debugger // Si llegó hasta acá es porque el jugador gano al matar todas las naves
-    }
-    
-    enemySpaceshipsList.forEach(enemy => {
-        enemy.position.x += currentSpeed * delta
-    });
-    
-    if (rightShip.position.x > MAP_WIDE_X || leftShip.position.x < -MAP_WIDE_X) {
-        // Cuando llego al borde, cambio de sentido
-        currentSpeed *= -1
-    }
-    
-    function lastShipOnRightSide(){
-        for (let j = 11; j >= 0; j--) {
-            for (let i = 4; i >= 0; i--) {
-                if (enemySpaceshipsMatrix[i][j] != null)
-                    return enemySpaceshipsMatrix[i][j]
-            }
-        }
-        return null
-    }
-    function lastShipOnLeftSide(){
-        for (let j = 0; j < 12; j++) {
-            for (let i = 4; i >= 0; i--) {
-                if (enemySpaceshipsMatrix[i][j] != null)
-                    return enemySpaceshipsMatrix[i][j]
-            }
-        }
-        return null
-    }
-
-    
-    
     //#######################################//
     //--------------- UPDATES ---------------//
     //--- Update del Keyboard
