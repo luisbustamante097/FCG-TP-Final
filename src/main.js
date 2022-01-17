@@ -28,6 +28,9 @@ var enemySpaceshipsList = []
 //* Matriz de naves enemigas
 var enemySpaceshipsMatrix
 
+//* Lista de naves en primera linea
+var enemiesFirstLine
+
 //* Flag para evitar que se empieze usar el mainShip antes de que este su modelo cargado
 var waitToStart = 10
 
@@ -108,8 +111,10 @@ async function init(){
     createMainShip()
     //----Creo las naves enemigas
     await createEnemies()
-    // Guardo tambien las naves en formato de matriz
+    // Guardo tambien las naves en formato de matriz (necesario para el movimiento)
     enemySpaceshipsMatrix = listToMatrix(enemySpaceshipsList, 12)
+    // Además necesito la lista de las naves en primera linea (necesario para los disparos)
+    enemiesFirstLine = [...enemySpaceshipsMatrix[4]]
 }
 
 //Funcion para animar (60 FPS)
@@ -188,7 +193,23 @@ function update() {
     
     //########################################//
     //--------- ENEMY SHIPS MOVEMENT ---------//
-    moveEnemies()
+    // moveEnemies()
+    
+    //########################################//
+    //--------- ENEMY SHIPS SHOOTING ---------//
+    enemiesFirstLine.forEach(enemy => {
+        enemy.material.color.setHex( 0xFF0000 ) //! TEST
+        const SHOOTING_PROB = 0.004
+        // Vamos a dejar que se dispare con una probabilidad del X%,
+        // esto significa que por cada frame que se ejecuta, hay una
+        // probabilidad del X% de que una nave dispare
+        if (Math.random() < SHOOTING_PROB) {
+            // Ahora vamos a elegir una nave al azar de la primera linea
+            var randomIndex = getRandomInt(0, enemiesFirstLine.length)
+            enemiesFirstLine[randomIndex].material.color.setHex( 0x0000FF ) //! TEST
+        }
+        
+    });
 
     //#######################################//
     //--------------- UPDATES ---------------//
@@ -218,3 +239,6 @@ function listToMatrix(list, elementsPerSubArray) {
     return matrix;
 }
 
+function getRandomInt(min, max) {
+    return Math.floor(Math.random() * (max - min)) + min;
+}
