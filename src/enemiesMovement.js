@@ -36,16 +36,11 @@ function moveEnemies(){
         if (rightShip.position.x > MAP_WIDE_X) debugger; //! si entra acá hay error (BORRAR AL TERMINAR)
     }
     
-    
-    
-    if (rightShip == null || leftShip == null){
-        debugger // Si llegó hasta acá es porque el jugador gano al matar todas las naves
-    }
 }
     
 function lastShipOnRightSide(){
-    for (let j = 11; j >= 0; j--) {
-        for (let i = 4; i >= 0; i--) {
+    for (let j = SHIPS_IN_ROW-1; j >= 0; j--) {
+        for (let i = SHIPS_IN_COLS-1; i >= 0; i--) {
             if (enemySpaceshipsMatrix[i][j] != null)
                 return enemySpaceshipsMatrix[i][j]
         }
@@ -53,8 +48,8 @@ function lastShipOnRightSide(){
     return null
 }
 function lastShipOnLeftSide(){
-    for (let j = 0; j < 12; j++) {
-        for (let i = 4; i >= 0; i--) {
+    for (let j = 0; j < SHIPS_IN_ROW; j++) {
+        for (let i = SHIPS_IN_COLS-1; i >= 0; i--) {
             if (enemySpaceshipsMatrix[i][j] != null)
                 return enemySpaceshipsMatrix[i][j]
         }

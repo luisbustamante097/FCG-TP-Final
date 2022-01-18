@@ -16,14 +16,11 @@ const NEAR = 0.1, FAR = 1000   //TODO: Cambiar FAR si es necesario
 //* Nave principal y wireframe flotante
 var mainShip, wireframeCube
 
-//* Lista de Colliders de main ship
-var collidableMeshesList_mainShip =[]
-
 //* Lista de Bullets
 var bulletsList = []
 
 //* Lista de Bullets enemigos
-var enemyBulletsList = [] //!
+var enemyBulletsList = []
 
 //* Lista de naves enemigas
 var enemySpaceshipsList = []
@@ -35,13 +32,15 @@ var enemySpaceshipsMatrix
 var enemyFirstLine
 
 //* Flag para evitar que se empieze usar el mainShip antes de que este su modelo cargado
-var waitToStart = 10
+var waitToStart = 10 // Se va a esperar 10 frames para arrancar a animar
 
 //* Wait stack de movimientos de la camara
 var cameraMovementsStack = []
 
 //* Constantes y variables importantes
 const MAP_WIDE_X = 300
+
+const SHIPS_IN_ROW = 12, SHIPS_IN_COLS = 5
 
 init();
 animate();
@@ -115,7 +114,7 @@ async function init(){
     //----Creo las naves enemigas
     await createEnemies()
     // Guardo tambien las naves en formato de matriz (necesario para el movimiento)
-    enemySpaceshipsMatrix = listToMatrix(enemySpaceshipsList, 12)
+    enemySpaceshipsMatrix = listToMatrix(enemySpaceshipsList, SHIPS_IN_ROW)
     // Además necesito la lista de las naves en primera linea (necesario para los disparos)
     enemyFirstLine = [...enemySpaceshipsMatrix[0]]
     
@@ -177,46 +176,29 @@ function update() {
     //------------ CAMERA MOVEMENT ------------//
     cameraMovement(moving)
     
-    //##########################################//
-    //------------ BULLET BEHAVIOUR ------------//
-    //--- Movimiento y destruccion de los bullets
-    const BULLET_SPEED = 3
-    if (bulletsList.length !== 0) {
-        for (let i = 0; i < bulletsList.length; i++) {
-            bullet = bulletsList[i]
-            //---Movimiento
-            bullet.position.z -= BULLET_SPEED
-            //---Destruccion por default
-            if ( Math.abs(mainShip.position.z - bullet.position.z) > FAR/2 ) {
-                removeEntity(bullet)
-                bulletsList.splice(i,1)
-                i--
-            }
-        }
-    }
+    //########################################//
+    //--------- ENEMY SHIPS MOVEMENT ---------//
+    moveEnemies()
+    
+    
+    
+    //###########################################//
+    //-------- MAINSHIP BULLET BEHAVIOUR --------//
+    //--- Movimiento y destruccion de los bullets de la mainShip
+    mainShipBulletsBehaviour()
     
     //####$######################################//
     //--------- ENEMY BULLETS BEHAVIOUR ---------//
-    //--- Movimiento y destruccion de los bullets
-    // const BULLET_SPEED = 3
-    if (enemyBulletsList.length !== 0) {
-        for (let i = 0; i < enemyBulletsList.length; i++) {
-            bullet = enemyBulletsList[i]
-            //---Movimiento
-            bullet.position.z += BULLET_SPEED
-            //---Destruccion por default
-            if ( Math.abs(mainShip.position.z - bullet.position.z) > FAR/2 ) {
-                removeEntity(bullet)
-                enemyBulletsList.splice(i,1)
-                i--
-            }
-        }
-    }
+    //--- Movimiento y destruccion de los bullets enemigos
+    enemyBulletsBehaviour()
+    
+     //########################################//
+    //--------- ENEMY SHIPS SHOOTING ---------//       
+    enemyShooting()
     
     //##########################################//
     //--------------- COLLISIONS ---------------//
     //--- Collisiones de la main ship
-    // checkIfCollides(mainShip, mainShipCollisionHandler, collidableMeshesList_mainShip)
     checkIfCollides(mainShip, mainShipCollisionHandler, enemyBulletsList)
 
     //--- Chequeo si las bullets de la mainShip colisionan en los enemigos
@@ -224,33 +206,9 @@ function update() {
         checkIfCollides(enemy, bulletCollisionHandler, bulletsList)
     });
     
-    //########################################//
-    //--------- ENEMY SHIPS MOVEMENT ---------//
-    moveEnemies()
     
-    //########################################//
-    //--------- ENEMY SHIPS SHOOTING ---------//       
-    const SHOOTING_PROB = 0.04
-    // Cada frame las naves tienen una probababilidad de disparo del 4%
-    if (Math.random() < SHOOTING_PROB) {
-        // Ahora vamos a elegir una nave al azar de la primera linea
-        var randomIndex = getRandomInt(0, enemyFirstLine.length)
-        enemy = enemyFirstLine[randomIndex]
-        createEnemyBullet(enemy)
-    }
-    
-    function createEnemyBullet(enemy) {
-        var geometry = new THREE.BoxGeometry( 5, 5, 5)
-        var material = new THREE.MeshStandardMaterial( { color: 0xffffff })
-        var bullet = new THREE.Mesh ( geometry, material )
-        // Guardo la posición de la nave, y se la seteo al bullet
-        var originPoint = enemy.position.clone()
-        bullet.position.copy(originPoint)
-        scene.add( bullet )
-        // Lo agrego a la lista de cosas que colisionan de los enemies
-        enemyBulletsList.push(bullet)
-    }
 
+    
     //#######################################//
     //--------------- UPDATES ---------------//
     //--- Update del Keyboard

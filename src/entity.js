@@ -1,4 +1,4 @@
-//? Aca vamos a poner los metodos de creacion de objetos
+//? En este archivo vamos a poner los metodos de creacion de objetos
 
 const onProgress = ( xhr ) => console.log( ( xhr.loaded / xhr.total * 100 ) + '% loaded' );
 const onError = ( error ) => console.log( 'An error happened' );
@@ -30,23 +30,11 @@ function createMainShip() {
         }, onProgress, onError);
 }
 
-function createMainShipBullet() {
-    var geometry = new THREE.BoxGeometry( 5, 5, 5)
-    var material = new THREE.MeshStandardMaterial( { color: 0xffffff })
-    var bullet = new THREE.Mesh ( geometry, material )
-    // Guardo la posición de la nave, y se la seteo al bullet
-    var originPoint = mainShip.position.clone()
-    bullet.position.copy(originPoint)
-    scene.add( bullet )
-    // Lo agrego a la lista de cosas que colisionan de los enemies
-    bulletsList.push(bullet)
-}
-
 async function createEnemies() {    
     var initialX = -220, initialY = 10, initialZ = -400
     var xIncr = 0, zIncr = 0
     var xStep = 40, zStep = 40
-    var inRow = 12, inCols = 5
+    var inRow = SHIPS_IN_ROW, inCols = SHIPS_IN_COLS
     
     // Creo el material que van a usar todos los enemies de color verde
     var enemyMaterial = new THREE.MeshStandardMaterial( { color: 0x00ff00 })
@@ -116,4 +104,32 @@ function removeEntity(mesh) {
     object.geometry.dispose();
     object.material.dispose();
     scene.remove( object );
+}
+
+function createBullet(bulletColor) {
+    var geometry = new THREE.BoxGeometry( 5, 5, 5)
+    var material = new THREE.MeshStandardMaterial( { color: bulletColor })
+    var bullet = new THREE.Mesh ( geometry, material )
+    return bullet
+}
+
+function createMainShipBullet() {
+    var bullet = createBullet(0xFFFFFF)
+    // Guardo la posición de la nave, y se la seteo al bullet
+    var originPoint = mainShip.position.clone()
+    bullet.position.copy(originPoint)
+    scene.add( bullet )
+    // Lo agrego a la lista de cosas que colisionan de los enemies
+    bulletsList.push(bullet)
+}
+
+function createEnemyBullet(enemy) {
+    var bullet = createBullet(0xFF2222)
+    // Guardo la posición de la nave, y se la seteo al bullet
+    var originPoint = enemy.position.clone()
+    bullet.position.copy(originPoint)
+    bullet.position.y -= 5  // La bajo para que pegue con las alas de la mainShip
+    scene.add( bullet )
+    // Lo agrego a la lista de cosas que colisionan de los enemies
+    enemyBulletsList.push(bullet)
 }

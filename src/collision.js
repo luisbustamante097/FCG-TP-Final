@@ -31,8 +31,8 @@ function bulletCollisionHandler(enemy, collisionResults) {
     var index = enemySpaceshipsList.indexOf(enemy)
     if (index !== -1) { enemySpaceshipsList.splice(index, 1) }
     // Tambien la "tacho" en la matriz
-    for (let i = 0; i < 5; i++) {
-        for (let j = 0; j < 12; j++) {
+    for (let i = 0; i < SHIPS_IN_COLS; i++) {
+        for (let j = 0; j < SHIPS_IN_ROW; j++) {
             if (enemySpaceshipsMatrix[i][j] == enemy){
                 enemySpaceshipsMatrix[i][j] = null
                 break

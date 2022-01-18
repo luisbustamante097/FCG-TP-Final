@@ -41,16 +41,6 @@ function initTesting (){
     wireframeCube = new THREE.Mesh ( geometry, material )
     wireframeCube.position.set(0,30,-500)
     scene.add( wireframeCube )
-    
-    //--- Muro Collisionable
-	var wallGeometry = new THREE.BoxGeometry( 100, 100, 20, 1, 1, 1 );
-	var wallMaterial = new THREE.MeshBasicMaterial( { wireframe: true })
-	
-	var wall = new THREE.Mesh(wallGeometry, wallMaterial);
-	wall.position.set(-200, 50, 0);
-	wall.rotation.y = 3.14159 / 2;
-	scene.add(wall);
-	collidableMeshesList_mainShip.push(wall); // <-- Lo agrego a la lista de cosas que colisionan
 }
 
 function animateTesting() {
