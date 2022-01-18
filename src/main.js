@@ -22,6 +22,9 @@ var collidableMeshesList_mainShip =[]
 //* Lista de Bullets
 var bulletsList = []
 
+//* Lista de Bullets enemigos
+var enemyBulletsList = [] //!
+
 //* Lista de naves enemigas
 var enemySpaceshipsList = []
 
@@ -29,7 +32,7 @@ var enemySpaceshipsList = []
 var enemySpaceshipsMatrix
 
 //* Lista de naves en primera linea
-var enemiesFirstLine
+var enemyFirstLine
 
 //* Flag para evitar que se empieze usar el mainShip antes de que este su modelo cargado
 var waitToStart = 10
@@ -114,7 +117,18 @@ async function init(){
     // Guardo tambien las naves en formato de matriz (necesario para el movimiento)
     enemySpaceshipsMatrix = listToMatrix(enemySpaceshipsList, 12)
     // Además necesito la lista de las naves en primera linea (necesario para los disparos)
-    enemiesFirstLine = [...enemySpaceshipsMatrix[4]]
+    enemyFirstLine = [...enemySpaceshipsMatrix[0]]
+    
+    // Pinto las naves
+    enemyFirstLine.forEach(enemy => {
+        enemy.material.color.setHex( 0xFF0000 )
+    });
+    enemySpaceshipsMatrix[3].forEach(enemy => {
+        enemy.material.color.setHex( 0x0000FF )
+    });
+    enemySpaceshipsMatrix[4].forEach(enemy => {
+        enemy.material.color.setHex( 0x0000FF )
+    });
 }
 
 //Funcion para animar (60 FPS)
@@ -181,10 +195,29 @@ function update() {
         }
     }
     
+    //####$######################################//
+    //--------- ENEMY BULLETS BEHAVIOUR ---------//
+    //--- Movimiento y destruccion de los bullets
+    // const BULLET_SPEED = 3
+    if (enemyBulletsList.length !== 0) {
+        for (let i = 0; i < enemyBulletsList.length; i++) {
+            bullet = enemyBulletsList[i]
+            //---Movimiento
+            bullet.position.z += BULLET_SPEED
+            //---Destruccion por default
+            if ( Math.abs(mainShip.position.z - bullet.position.z) > FAR/2 ) {
+                removeEntity(bullet)
+                enemyBulletsList.splice(i,1)
+                i--
+            }
+        }
+    }
+    
     //##########################################//
     //--------------- COLLISIONS ---------------//
     //--- Collisiones de la main ship
-    checkIfCollides(mainShip, mainShipCollisionHandler, collidableMeshesList_mainShip)
+    // checkIfCollides(mainShip, mainShipCollisionHandler, collidableMeshesList_mainShip)
+    checkIfCollides(mainShip, mainShipCollisionHandler, enemyBulletsList)
 
     //--- Chequeo si las bullets de la mainShip colisionan en los enemigos
     enemySpaceshipsList.forEach(enemy => {
@@ -193,23 +226,30 @@ function update() {
     
     //########################################//
     //--------- ENEMY SHIPS MOVEMENT ---------//
-    // moveEnemies()
+    moveEnemies()
     
     //########################################//
-    //--------- ENEMY SHIPS SHOOTING ---------//
-    enemiesFirstLine.forEach(enemy => {
-        enemy.material.color.setHex( 0xFF0000 ) //! TEST
-        const SHOOTING_PROB = 0.004
-        // Vamos a dejar que se dispare con una probabilidad del X%,
-        // esto significa que por cada frame que se ejecuta, hay una
-        // probabilidad del X% de que una nave dispare
-        if (Math.random() < SHOOTING_PROB) {
-            // Ahora vamos a elegir una nave al azar de la primera linea
-            var randomIndex = getRandomInt(0, enemiesFirstLine.length)
-            enemiesFirstLine[randomIndex].material.color.setHex( 0x0000FF ) //! TEST
-        }
-        
-    });
+    //--------- ENEMY SHIPS SHOOTING ---------//       
+    const SHOOTING_PROB = 0.04
+    // Cada frame las naves tienen una probababilidad de disparo del 4%
+    if (Math.random() < SHOOTING_PROB) {
+        // Ahora vamos a elegir una nave al azar de la primera linea
+        var randomIndex = getRandomInt(0, enemyFirstLine.length)
+        enemy = enemyFirstLine[randomIndex]
+        createEnemyBullet(enemy)
+    }
+    
+    function createEnemyBullet(enemy) {
+        var geometry = new THREE.BoxGeometry( 5, 5, 5)
+        var material = new THREE.MeshStandardMaterial( { color: 0xffffff })
+        var bullet = new THREE.Mesh ( geometry, material )
+        // Guardo la posición de la nave, y se la seteo al bullet
+        var originPoint = enemy.position.clone()
+        bullet.position.copy(originPoint)
+        scene.add( bullet )
+        // Lo agrego a la lista de cosas que colisionan de los enemies
+        enemyBulletsList.push(bullet)
+    }
 
     //#######################################//
     //--------------- UPDATES ---------------//

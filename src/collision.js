@@ -17,8 +17,13 @@ function checkIfCollides(object, handler, collidableMeshesListOfObject) {
     }	
 }
 
-function mainShipCollisionHandler() {
-    // Nada por lo pronto
+function mainShipCollisionHandler(object, collisionResults) {
+    console.log("I'm bleading")
+    var bullet = collisionResults[0].object
+    removeEntity(bullet) 
+    var index = enemyBulletsList.indexOf(bullet)
+    if (index !== -1) { enemyBulletsList.splice(index, 1) }
+    
 }
 function bulletCollisionHandler(enemy, collisionResults) {
     // Remuevo la nave y la saco de la lista de naves
@@ -26,22 +31,18 @@ function bulletCollisionHandler(enemy, collisionResults) {
     var index = enemySpaceshipsList.indexOf(enemy)
     if (index !== -1) { enemySpaceshipsList.splice(index, 1) }
     // Tambien la "tacho" en la matriz
-    var i_enemy = 0, j_enemy = 0
     for (let i = 0; i < 5; i++) {
         for (let j = 0; j < 12; j++) {
             if (enemySpaceshipsMatrix[i][j] == enemy){
                 enemySpaceshipsMatrix[i][j] = null
-                i_enemy = i
-                j_enemy = j
                 break
             }
         }
     }
-    // Ademas debo actualizar la lista de primera linea
-    if (i_enemy > 0){
-        enemiesFirstLine[j_enemy] = enemySpaceshipsMatrix[i_enemy - 1][j_enemy]
-    } else{
-        enemiesFirstLine.splice(j_enemy, 1)
+    // Ademas debo actualizar la lista de primera linea si es que el enemigo pertenecia a ella
+    if (enemyFirstLine.includes(enemy)){
+        var index = enemyFirstLine.indexOf(enemy)
+        enemyFirstLine.splice(index, 1)
     }
     
     // Obtengo el bullet que mato a la nave, lo remuevo, y lo saco de su lista
