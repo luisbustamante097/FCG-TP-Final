@@ -150,13 +150,20 @@ function update() {
     const SPEED = 250
 	var moveDistance = SPEED * movementClock.getDelta()
     var moving = false
-
-	if ( keyboard.pressed("A") || keyboard.pressed("left") ){
+    
+    function pressedLeft() {
+        return keyboard.pressed("A") || keyboard.pressed("left")
+    }
+    function pressedRight() {
+        return keyboard.pressed("D") || keyboard.pressed("right")
+    }
+    
+	if ( pressedLeft()  ){
 	    mainShip.position.x -= moveDistance
         saveMovementsFromMainship(-moveDistance)
         moving = true
     }
-	if ( keyboard.pressed("D") || keyboard.pressed("right") ){
+	if ( pressedRight() && !moving  ){
         mainShip.position.x += moveDistance
         saveMovementsFromMainship(+moveDistance)
         moving = true
