@@ -106,6 +106,9 @@ function removeEntity(mesh) {
     scene.remove( object );
 }
 
+//#########################################
+//---------------- BULLETS ----------------
+
 function createBullet(bulletColor) {
     var geometry = new THREE.BoxGeometry( 5, 5, 5)
     var material = new THREE.MeshStandardMaterial( { color: bulletColor })
@@ -120,7 +123,7 @@ function createMainShipBullet() {
     bullet.position.copy(originPoint)
     scene.add( bullet )
     // Lo agrego a la lista de cosas que colisionan de los enemies
-    bulletsList.push(bullet)
+    mainShipBulletsList.push(bullet)
 }
 
 function createEnemyBullet(enemy) {
@@ -132,4 +135,16 @@ function createEnemyBullet(enemy) {
     scene.add( bullet )
     // Lo agrego a la lista de cosas que colisionan de los enemies
     enemyBulletsList.push(bullet)
+}
+
+//#########################################
+//---------------- SHIELDS ----------------
+function createShield(position) {
+    var geometry = new THREE.BoxGeometry( 70, 30, 30)
+    var material = new THREE.MeshStandardMaterial( { color: 0xFFFFFF })
+    var shield = new THREE.Mesh ( geometry, material )
+    
+    shield.position.copy(position)
+    scene.add(shield)
+    shields.push(shield)
 }

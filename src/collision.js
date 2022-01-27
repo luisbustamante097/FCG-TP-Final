@@ -48,6 +48,17 @@ function bulletCollisionHandler(enemy, collisionResults) {
     // Obtengo el bullet que mato a la nave, lo remuevo, y lo saco de su lista
     var bullet = collisionResults[0].object
     removeEntity(bullet) 
-    var index = bulletsList.indexOf(bullet)
-    if (index !== -1) { bulletsList.splice(index, 1) }
+    var index = mainShipBulletsList.indexOf(bullet)
+    if (index !== -1) { mainShipBulletsList.splice(index, 1) }
+}
+
+function shieldCollisionHandler(object, collisionResults) {
+    console.log("SHIELD FIRED")
+    var bullet = collisionResults[0].object
+    removeEntity(bullet) 
+    // var index = enemyBulletsList.indexOf(bullet)
+    // if (index !== -1) { enemyBulletsList.splice(index, 1) }
+    var index = mainShipBulletsList.indexOf(bullet)
+    if (index !== -1) { mainShipBulletsList.splice(index, 1) }
+    object.material.color.setHex(0x00FF00)
 }

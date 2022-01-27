@@ -6,15 +6,15 @@ const ENEMY_BULLET_SPEED = 3
 const ENEMY_SHOOTING_PROBABILITY = 0.04
 
 function mainShipBulletsBehaviour() {
-    if (bulletsList.length !== 0) {
-        for (let i = 0; i < bulletsList.length; i++) {
-            bullet = bulletsList[i]
+    if (mainShipBulletsList.length !== 0) {
+        for (let i = 0; i < mainShipBulletsList.length; i++) {
+            bullet = mainShipBulletsList[i]
             //---Movimiento
             bullet.position.z -= MAINSHIP_BULLET_SPEED
             //---Destruccion por default
             if ( Math.abs(mainShip.position.z - bullet.position.z) > FAR/2 ) {
                 removeEntity(bullet)
-                bulletsList.splice(i,1)
+                mainShipBulletsList.splice(i,1)
                 i--
             }
         }

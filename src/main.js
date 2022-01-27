@@ -17,7 +17,7 @@ const NEAR = 0.1, FAR = 1000   //TODO: Cambiar FAR si es necesario
 var mainShip, wireframeCube
 
 //* Lista de Bullets
-var bulletsList = []
+var mainShipBulletsList = []
 
 //* Lista de Bullets enemigos
 var enemyBulletsList = []
@@ -31,6 +31,9 @@ var enemySpaceshipsMatrix
 //* Lista de naves en primera linea
 var enemyFirstLine
 
+//* Arreglo de 3 shields
+var shields = []
+
 //* Flag para evitar que se empieze usar el mainShip antes de que este su modelo cargado
 var waitToStart = 10 // Se va a esperar 10 frames para arrancar a animar
 
@@ -38,9 +41,11 @@ var waitToStart = 10 // Se va a esperar 10 frames para arrancar a animar
 var cameraMovementsStack = []
 
 //* Constantes y variables importantes
+// Máximo ancho del mapa
 const MAP_WIDE_X = 300
-
+// Cantidad de naves
 const SHIPS_IN_ROW = 12, SHIPS_IN_COLS = 5
+
 
 init();
 animate();
@@ -113,12 +118,13 @@ async function init(){
     createMainShip()
     //----Creo las naves enemigas
     await createEnemies()
+    
     // Guardo tambien las naves en formato de matriz (necesario para el movimiento)
     enemySpaceshipsMatrix = listToMatrix(enemySpaceshipsList, SHIPS_IN_ROW)
     // Además necesito la lista de las naves en primera linea (necesario para los disparos)
     enemyFirstLine = [...enemySpaceshipsMatrix[0]]
     
-    // Pinto las naves
+    //----Pinto las naves
     enemyFirstLine.forEach(enemy => {
         enemy.material.color.setHex( 0xFF0000 )
     });
@@ -128,6 +134,12 @@ async function init(){
     enemySpaceshipsMatrix[4].forEach(enemy => {
         enemy.material.color.setHex( 0x0000FF )
     });
+    
+    //----Creo los shields
+    createShield(new THREE.Vector3(0,0,-100))
+    createShield(new THREE.Vector3(-180,0,-100))
+    createShield(new THREE.Vector3(180,0,-100))
+    
 }
 
 //Funcion para animar (60 FPS)
@@ -181,17 +193,18 @@ function update() {
     
     //#########################################//
     //------------ CAMERA MOVEMENT ------------//
-    cameraMovement(moving)
+    // cameraMovement(moving)
     
     //########################################//
     //--------- ENEMY SHIPS MOVEMENT ---------//
-    moveEnemies()
+    // moveEnemies()
     
     
     
     //###########################################//
     //-------- MAINSHIP BULLET BEHAVIOUR --------//
     //--- Movimiento y destruccion de los bullets de la mainShip
+    // debugger
     mainShipBulletsBehaviour()
     
     //####$######################################//
@@ -210,9 +223,42 @@ function update() {
 
     //--- Chequeo si las bullets de la mainShip colisionan en los enemigos
     enemySpaceshipsList.forEach(enemy => {
-        checkIfCollides(enemy, bulletCollisionHandler, bulletsList)
+        checkIfCollides(enemy, bulletCollisionHandler, mainShipBulletsList)
     });
     
+    //--- Chequeo si alguna de las bullets golpea en los shields
+    shields.forEach(shield => {
+        checkEveryBullet(mainShipBulletsList)
+        checkEveryBullet(enemyBulletsList)
+        
+        function checkEveryBullet(bulletsList) {
+            for (let bullet of bulletsList){
+                if ( hasCollisionWithShield(bullet) ){
+                    shieldCollisionHandler(bullet, bulletsList)
+                    break;
+                }
+            }
+            
+        }
+        function shieldCollisionHandler(bullet, bulletsList) {
+            console.log("SHIELD FIRED")
+            // Removemos la bullet
+            removeEntity(bullet) 
+            var index = bulletsList.indexOf(bullet)
+            if (index !== -1) { bulletsList.splice(index, 1) }
+            
+            // Aplicamos efecto sobre shield
+            
+        }
+        
+        function hasCollisionWithShield(bullet){
+            return Math.abs(bullet.position.z - shield.position.z) <= shield.geometry.parameters.height/2 &&
+            Math.abs(bullet.position.x - shield.position.x) <= shield.geometry.parameters.width/2
+        }
+        
+    });
+    
+
     
 
     
