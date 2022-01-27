@@ -31,8 +31,11 @@ var enemySpaceshipsMatrix
 //* Lista de naves en primera linea
 var enemyFirstLine
 
-//* Arreglo de 3 shields
+//* Lista de Shields
 var shields = []
+
+//* Vida de los shields
+var shieldsLife = {}
 
 //* Flag para evitar que se empieze usar el mainShip antes de que este su modelo cargado
 var waitToStart = 10 // Se va a esperar 10 frames para arrancar a animar
@@ -45,7 +48,12 @@ var cameraMovementsStack = []
 const MAP_WIDE_X = 300
 // Cantidad de naves
 const SHIPS_IN_ROW = 12, SHIPS_IN_COLS = 5
+// Velocidad de la mainShip
+const MAINSHIP_SPEED = 250
 
+//* Constantes para los shields
+const SHIELDS_MAX_LIFE = 100
+const SHIELD_LIFE_DECREASE = 10
 
 init();
 animate();
@@ -140,6 +148,11 @@ async function init(){
     createShield(new THREE.Vector3(-180,0,-100))
     createShield(new THREE.Vector3(180,0,-100))
     
+    //--- Asigno la salud a cada Shield
+    shields.forEach(shield => {
+        shieldsLife[shield.uuid] = SHIELDS_MAX_LIFE
+    })
+    
 }
 
 //Funcion para animar (60 FPS)
@@ -159,8 +172,7 @@ function update() {
     
     //########################################//
     //--------------- KEYBOARD ---------------//
-    const SPEED = 250
-	var moveDistance = SPEED * movementClock.getDelta()
+	var moveDistance = MAINSHIP_SPEED * movementClock.getDelta()
     var moving = false
     
     function pressedLeft() {
@@ -193,7 +205,7 @@ function update() {
     
     //#########################################//
     //------------ CAMERA MOVEMENT ------------//
-    // cameraMovement(moving)
+    cameraMovement(moving)
     
     //########################################//
     //--------- ENEMY SHIPS MOVEMENT ---------//
@@ -204,7 +216,6 @@ function update() {
     //###########################################//
     //-------- MAINSHIP BULLET BEHAVIOUR --------//
     //--- Movimiento y destruccion de los bullets de la mainShip
-    // debugger
     mainShipBulletsBehaviour()
     
     //####$######################################//
@@ -227,38 +238,7 @@ function update() {
     });
     
     //--- Chequeo si alguna de las bullets golpea en los shields
-    shields.forEach(shield => {
-        checkEveryBullet(mainShipBulletsList)
-        checkEveryBullet(enemyBulletsList)
-        
-        function checkEveryBullet(bulletsList) {
-            for (let bullet of bulletsList){
-                if ( hasCollisionWithShield(bullet) ){
-                    shieldCollisionHandler(bullet, bulletsList)
-                    break;
-                }
-            }
-            
-        }
-        function shieldCollisionHandler(bullet, bulletsList) {
-            console.log("SHIELD FIRED")
-            // Removemos la bullet
-            removeEntity(bullet) 
-            var index = bulletsList.indexOf(bullet)
-            if (index !== -1) { bulletsList.splice(index, 1) }
-            
-            // Aplicamos efecto sobre shield
-            
-        }
-        
-        function hasCollisionWithShield(bullet){
-            return Math.abs(bullet.position.z - shield.position.z) <= shield.geometry.parameters.height/2 &&
-            Math.abs(bullet.position.x - shield.position.x) <= shield.geometry.parameters.width/2
-        }
-        
-    });
-    
-
+    shieldsCollisionDetect() 
     
 
     
@@ -271,6 +251,8 @@ function update() {
     //------------- TESTING -------------//
     //TODO: Comentar cuando ya no se necesite
     animateTesting();
+
+    
 }
 
 

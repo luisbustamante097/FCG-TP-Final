@@ -141,7 +141,7 @@ function createEnemyBullet(enemy) {
 //---------------- SHIELDS ----------------
 function createShield(position) {
     var geometry = new THREE.BoxGeometry( 70, 30, 30)
-    var material = new THREE.MeshStandardMaterial( { color: 0xFFFFFF })
+    var material = new THREE.MeshStandardMaterial( { color: 0xFFFFFF, transparent: true })
     var shield = new THREE.Mesh ( geometry, material )
     
     shield.position.copy(position)

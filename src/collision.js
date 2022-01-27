@@ -52,13 +52,44 @@ function bulletCollisionHandler(enemy, collisionResults) {
     if (index !== -1) { mainShipBulletsList.splice(index, 1) }
 }
 
-function shieldCollisionHandler(object, collisionResults) {
-    console.log("SHIELD FIRED")
-    var bullet = collisionResults[0].object
-    removeEntity(bullet) 
-    // var index = enemyBulletsList.indexOf(bullet)
-    // if (index !== -1) { enemyBulletsList.splice(index, 1) }
-    var index = mainShipBulletsList.indexOf(bullet)
-    if (index !== -1) { mainShipBulletsList.splice(index, 1) }
-    object.material.color.setHex(0x00FF00)
+// Funciones para colisiones en los escudos
+function shieldsCollisionDetect() {
+    shields.forEach(shield => {
+        checkIfSomeBulletCollides(mainShipBulletsList)
+        checkIfSomeBulletCollides(enemyBulletsList)
+
+        function checkIfSomeBulletCollides(bulletsList) {
+            var bulletFound = bulletsList.find(bullet => hasCollisionWithShield(bullet))
+            if (bulletFound !== undefined) {
+                shieldCollisionHandler(bulletFound, bulletsList)
+            }
+        }
+
+        function hasCollisionWithShield(bullet) {
+            return Math.abs(bullet.position.z - shield.position.z) <= shield.geometry.parameters.height / 2 &&
+                Math.abs(bullet.position.x - shield.position.x) <= shield.geometry.parameters.width / 2
+        }
+
+        function shieldCollisionHandler(bullet, bulletsList) {
+            console.log("SHIELD FIRED")
+            // Removemos la bullet
+            removeEntity(bullet)
+            var index = bulletsList.indexOf(bullet)
+            if (index !== -1) { bulletsList.splice(index, 1)} 
+
+            // Aplicamos efecto sobre el shield
+            shieldsLife[shield.uuid] -= SHIELD_LIFE_DECREASE
+            // La opacidad se reduce en proporción a la vida sacada
+            shield.material.opacity -= SHIELD_LIFE_DECREASE / SHIELDS_MAX_LIFE
+
+            // Si la salud es menor a 0 eliminamos al shield
+            var shieldLife = shieldsLife[shield.uuid]
+            if (shieldLife <= 0) {
+                removeEntity(shield)
+                var index = shields.indexOf(shield)
+                if (index !== -1) { shields.splice(index, 1)} 
+                delete shieldsLife[shield.uuid]
+            }
+        }
+    })
 }
