@@ -182,21 +182,17 @@ function update() {
         return keyboard.pressed("D") || keyboard.pressed("right")
     }
     
-	if ( pressedLeft()  ){
+	if ( pressedLeft() && mainShip.position.x > -MAP_WIDE_X ){
 	    mainShip.position.x -= moveDistance
         saveMovementsFromMainship(-moveDistance)
         moving = true
     }
-	if ( pressedRight() && !moving  ){
+	if ( pressedRight() && !moving && mainShip.position.x < MAP_WIDE_X ){
         mainShip.position.x += moveDistance
         saveMovementsFromMainship(+moveDistance)
         moving = true
     }
-	if ( keyboard.pressed("W") || keyboard.pressed("up") )      //TODO: Quitar
-	    mainShip.position.z -= moveDistance
-		
-	if ( keyboard.pressed("S") || keyboard.pressed("down") )    //TODO: Quitar
-        mainShip.position.z += moveDistance
+	
     
     //---------------Disparar bullets
     if ( keyboard.down("space") ){

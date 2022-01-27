@@ -47,6 +47,13 @@ function animateTesting() {
     //--- WIREFRAME QUE GIRA
     wireframeCube.rotation.x -= 0.01;
     wireframeCube.rotation.y -= 0.01;
+    
+    // var moveDistance = MAINSHIP_SPEED * movementClock.getDelta()
+    // if ( keyboard.pressed("W") || keyboard.pressed("up") )      //TODO: Quitar
+	//     mainShip.position.z -= moveDistance
+		
+	// if ( keyboard.pressed("S") || keyboard.pressed("down") )    //TODO: Quitar
+    //     mainShip.position.z += moveDistance
 
     //----Update de los controles Orbit //TODO: sacar cuando terminemos
     // controls.update();
