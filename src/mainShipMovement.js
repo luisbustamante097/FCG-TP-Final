@@ -1,16 +1,18 @@
-function mainShipMovement(moving) {
+function mainShipMovement() {
+    var isMoving = false
     var moveDistance = MAINSHIP_SPEED * movementClock.getDelta()
     
 	if ( pressedLeft() && isMainShipInsideLeftBorder() ){
 	    mainShip.position.x -= moveDistance
         saveMovementsFromMainship(-moveDistance)
-        moving = true
+        isMoving = true
     }
-	if ( pressedRight() && isMainShipInsideRightBorder() && !moving ){
+	if ( pressedRight() && isMainShipInsideRightBorder() && !isMoving ){
         mainShip.position.x += moveDistance
         saveMovementsFromMainship(+moveDistance)
-        moving = true
+        isMoving = true
     }
+    return isMoving
 }
 
 function isMainShipInsideRightBorder() {

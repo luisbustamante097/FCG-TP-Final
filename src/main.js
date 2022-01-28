@@ -221,12 +221,11 @@ function update() {
     
     //#######################################//
     //---------- MAINSHIP MOVEMENT ----------//
-    var moving = false
-	mainShipMovement(moving)
+    var isMoving = mainShipMovement()
     
     //#########################################//
     //------------ CAMERA MOVEMENT ------------//
-    cameraMovement(moving)
+    cameraMovement(isMoving)
     
     //########################################//
     //--------- ENEMY SHIPS MOVEMENT ---------//
