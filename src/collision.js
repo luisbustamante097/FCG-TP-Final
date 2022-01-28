@@ -25,6 +25,7 @@ function mainShipCollisionHandler(object, collisionResults) {
     
     // Resto los corazones y la vida
     removedHeart = hearts.pop()
+    mainShipLife -= 1
     removeEntityFromSceneOrtho(removedHeart)
     
     function removeEntityFromSceneOrtho(mesh) {

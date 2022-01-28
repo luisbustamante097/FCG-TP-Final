@@ -50,6 +50,9 @@ var waitToStart = 10 // Se va a esperar 10 frames para arrancar a animar
 //* Wait stack de movimientos de la camara
 var cameraMovementsStack = []
 
+//* Flag para terminar el juego
+var endOfGame = false
+
 //* Constantes y variables importantes
 // Máximo ancho del mapa
 const MAP_WIDE_X = 300
@@ -62,6 +65,7 @@ const MAINSHIP_SPEED = 250
 const SHIELDS_MAX_LIFE = 100
 const SHIELD_LIFE_DECREASE = 10
 
+//*** Ejecución de funciones principales
 init();
 animate();
 
@@ -173,7 +177,6 @@ async function init(){
     createHeart(heartTexture, SCREEN_WIDTH/2 - 120, -SCREEN_HEIGHT/2 + 50)
     
     
-    
 }
 
 //Funcion para animar (60 FPS)
@@ -181,10 +184,19 @@ function animate() {
     requestAnimationFrame( animate )
 	render()
     
+    
     // Fix para no animar por 10 ciclos, mientras se terminan de cargar los modelos
-    if (waitToStart != 0) waitToStart -= 1;
-    else update();
+    if (waitToStart != 0) {waitToStart -= 1}
+    else {
+        if (endOfGame){
+            debugger
+        } else{
+            update()
+        }
+    }
     // TODO: Mejorar! Porque esta atado con alambres
+    
+    
 }
 
 function render() {	
@@ -267,16 +279,29 @@ function update() {
     shieldsCollisionDetect() 
     
     
+    
     //#######################################//
     //------------ FIN DEL JUEGO ------------//
-    if (hearts.length == 0){
+    if (mainShipLife == 0){
         console.log("PERDISTE!")
-        debugger
+        var endText = new SpriteText('Perdiste :(', 45);
+        var endText2 = new SpriteText('Presiona F5 para reiniciar', 30);
+        sceneOrtho.add(endText);
+        endText.position.set(0,50,0)
+        sceneOrtho.add(endText2);
+        
+        endOfGame = true
     }
     
     if (enemySpaceshipsList.length == 0){
         console.log("GANASTE!")
-        debugger
+        var endText = new SpriteText('Ganaste! :D', 45);
+        var endText2 = new SpriteText('Presiona F5 para reiniciar', 30);
+        sceneOrtho.add(endText);
+        endText.position.set(0,50,0)
+        sceneOrtho.add(endText2);
+        
+        endOfGame = true
     }
     
     //#######################################//
