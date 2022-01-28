@@ -3,31 +3,44 @@
 const onProgress = ( xhr ) => console.log( ( xhr.loaded / xhr.total * 100 ) + '% loaded' );
 const onError = ( error ) => console.log( 'An error happened' );
 
-function createMainShip() {
+async function createMainShip() {
     // Template para carga de OBJ + MTL
     const manager = new THREE.LoadingManager();
     const MTLLoader = new THREE.MTLLoader( manager )
-    MTLLoader.load(
-        'models/lowpoly_spaceship/mainship.mtl',
-        ( materials ) => {
-            materials.preload()
-            
-            const OBJLoader = new THREE.OBJLoader( manager )
-            OBJLoader.setMaterials( materials )
-            OBJLoader.load( 
-                'models/lowpoly_spaceship/mainship.obj',
-                ( object ) => {
-                    object.traverse( ( child ) => { if ( child.isMesh ) mainShip = child } )
-                    
-                    // Seteo la posicion de la mainship
-                    mainShip.scale.set(200,200,200)
-                    mainShip.position.set(0,10,0)
-                    mainShip.rotation.y = Math.PI
-                    
-                    scene.add( mainShip )
-                }
-            );
-        }, onProgress, onError);
+    
+    function materialsLoader(materials){
+        materials.preload()
+        
+        const OBJLoader = new THREE.OBJLoader( manager )
+        OBJLoader.setMaterials( materials )
+        OBJLoader.load( 
+            'models/lowpoly_spaceship/mainship.obj',
+            ( object ) => {
+                object.traverse( ( child ) => { if ( child.isMesh ) mainShip = child } )
+                
+                // Seteo la posicion de la mainship
+                mainShip.scale.set(200,200,200)
+                mainShip.position.set(0,10,0)
+                mainShip.rotation.y = Math.PI
+                
+                scene.add( mainShip )
+            }
+        );
+    }
+    
+    async function geometryAsyncLoader (){
+        return new Promise((resolve) => {
+            MTLLoader.load(
+                'models/lowpoly_spaceship/mainship.mtl',
+                ( materials ) => resolve( materialsLoader(materials) ), onProgress, onError);
+        });
+    }
+    
+    await geometryAsyncLoader()
+    // ---- Idea de la solucion: https://discourse.threejs.org/t/how-to-deal-with-async-loader/15861/5
+    // Hago un lio con await/async solo para que en este punto exacto el mainShip este correctamente cargado
+    //  si no lo hiciera asi, el enemyGeometry quedaría en undefined, puesto que la carga se tarda un poco
+    
 }
 
 async function createEnemies() {    
@@ -94,7 +107,7 @@ async function loadEnemyGeometry() {
     
     await geometryAsyncLoader();
     // ---- Idea de la solucion: https://discourse.threejs.org/t/how-to-deal-with-async-loader/15861/5
-    // Hago un lio solo para que en este punto exacto el enemyGeometry este correctamente cargado
+    // Hago un lio con await/async solo para que en este punto exacto el enemyGeometry este correctamente cargado
     //  si no lo hiciera asi, el enemyGeometry quedaría en undefined, puesto que la carga se tarda un poco
     return enemyGeometry
 }

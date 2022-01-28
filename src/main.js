@@ -44,9 +44,6 @@ var hearts = []
 //* Vida de la nave
 var mainShipLife = 3
 
-//* Flag para evitar que se empieze usar el mainShip antes de que este su modelo cargado
-var waitToStart = 10 // Se va a esperar 10 frames para arrancar a animar
-
 //* Wait stack de movimientos de la camara
 var cameraMovementsStack = []
 
@@ -66,8 +63,15 @@ const SHIELDS_MAX_LIFE = 100
 const SHIELD_LIFE_DECREASE = 10
 
 //*** Ejecución de funciones principales
-init();
-animate();
+main();
+
+// Se realiza de esta manera para que se termine de ejecutar todo el init() antes de que se empieze a animar.
+// De lo contrario se van a tener errores en animate(), pues los Mesh no se terminaron de cargar todavía
+// debido a su mayor complejidad como modelo.
+async function main(){
+    await init()
+    animate()
+}
 
 async function init(){
     //####################################################################
@@ -140,7 +144,7 @@ async function init(){
     //####################################//
     //------------- ENTITIES -------------//
     //----Creo main ship
-    createMainShip()
+    await createMainShip()
     //----Creo las naves enemigas
     await createEnemies()
     
@@ -184,19 +188,11 @@ function animate() {
     requestAnimationFrame( animate )
 	render()
     
-    
-    // Fix para no animar por 10 ciclos, mientras se terminan de cargar los modelos
-    if (waitToStart != 0) {waitToStart -= 1}
-    else {
-        if (endOfGame){
-            debugger
-        } else{
-            update()
-        }
-    }
-    // TODO: Mejorar! Porque esta atado con alambres
-    
-    
+    if (endOfGame){
+        debugger
+    } else{
+        update()
+    }    
 }
 
 function render() {	
