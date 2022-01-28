@@ -18,12 +18,21 @@ function checkIfCollides(object, handler, collidableMeshesListOfObject) {
 }
 
 function mainShipCollisionHandler(object, collisionResults) {
-    console.log("I'm bleading")
     var bullet = collisionResults[0].object
     removeEntity(bullet) 
     var index = enemyBulletsList.indexOf(bullet)
     if (index !== -1) { enemyBulletsList.splice(index, 1) }
     
+    // Resto los corazones y la vida
+    removedHeart = hearts.pop()
+    removeEntityFromSceneOrtho(removedHeart)
+    
+    function removeEntityFromSceneOrtho(mesh) {
+        const object = sceneOrtho.getObjectByProperty( 'uuid', mesh.uuid );
+        // object.texture.dispose();
+        object.material.dispose();
+        sceneOrtho.remove( object );
+    }
 }
 function bulletCollisionHandler(enemy, collisionResults) {
     // Remuevo la nave y la saco de la lista de naves
@@ -71,7 +80,6 @@ function shieldsCollisionDetect() {
         }
 
         function shieldCollisionHandler(bullet, bulletsList) {
-            console.log("SHIELD FIRED")
             // Removemos la bullet
             removeEntity(bullet)
             var index = bulletsList.indexOf(bullet)

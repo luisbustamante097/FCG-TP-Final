@@ -1,5 +1,6 @@
 // Variables globales estandares
 var container, scene, camera, renderer, controls, stats
+var cameraOrtho, sceneOrtho
 // Keyboard controller (from KeyboardState.js)
 var keyboard = new KeyboardState()
 
@@ -37,6 +38,12 @@ var shields = []
 //* Vida de los shields
 var shieldsLife = {}
 
+//* Sprites de Corazones (mostrando la vida de la mainShip)
+var hearts = []
+
+//* Vida de la nave
+var mainShipLife = 3
+
 //* Flag para evitar que se empieze usar el mainShip antes de que este su modelo cargado
 var waitToStart = 10 // Se va a esperar 10 frames para arrancar a animar
 
@@ -71,6 +78,12 @@ async function init(){
 	camera = new THREE.PerspectiveCamera( VIEW_ANGLE, ASPECT, NEAR, FAR);
 	// Agregamos camara a la escena
 	scene.add(camera);
+    
+    sceneOrtho = new THREE.Scene();
+    
+    cameraOrtho = new THREE.OrthographicCamera( - SCREEN_WIDTH / 2, SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2, - SCREEN_HEIGHT / 2, 1, 10 );
+    cameraOrtho.position.z = 10;
+    
 
     // Seteo la posición de la camara mirando a la escena
 	camera.lookAt(scene.position);	
@@ -153,6 +166,14 @@ async function init(){
         shieldsLife[shield.uuid] = SHIELDS_MAX_LIFE
     })
     
+    // Creción de corazones (en forma de sprite) para mostrar la vida
+    var heartTexture = new THREE.TextureLoader().load( 'images/heart.png' );
+    createHeart(heartTexture, SCREEN_WIDTH/2 - 50 , -SCREEN_HEIGHT/2 + 50)
+    createHeart(heartTexture, SCREEN_WIDTH/2 - 85 , -SCREEN_HEIGHT/2 + 50)
+    createHeart(heartTexture, SCREEN_WIDTH/2 - 120, -SCREEN_HEIGHT/2 + 50)
+    
+    
+    
 }
 
 //Funcion para animar (60 FPS)
@@ -166,7 +187,16 @@ function animate() {
     // TODO: Mejorar! Porque esta atado con alambres
 }
 
-function render() {	renderer.render( scene, camera ) }
+function render() {	
+    //let renderer clean next time
+    renderer.autoClear = true
+    renderer.render( scene, camera )
+    //don't let renderer erase canvas
+    renderer.autoClear = false
+    //clears the depth buffer so the objects in scene2 will always be on top
+    renderer.clearDepth()
+    renderer.render( sceneOrtho, cameraOrtho )
+}
 
 function update() {
     
@@ -205,7 +235,7 @@ function update() {
     
     //########################################//
     //--------- ENEMY SHIPS MOVEMENT ---------//
-    // moveEnemies()
+    moveEnemies()
     
     
     
@@ -236,7 +266,18 @@ function update() {
     //--- Chequeo si alguna de las bullets golpea en los shields
     shieldsCollisionDetect() 
     
-
+    
+    //#######################################//
+    //------------ FIN DEL JUEGO ------------//
+    if (hearts.length == 0){
+        console.log("PERDISTE!")
+        debugger
+    }
+    
+    if (enemySpaceshipsList.length == 0){
+        console.log("GANASTE!")
+        debugger
+    }
     
     //#######################################//
     //--------------- UPDATES ---------------//

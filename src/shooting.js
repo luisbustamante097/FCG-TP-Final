@@ -39,12 +39,14 @@ function enemyBulletsBehaviour() {
 }
 
 function enemyShooting() {
-    // Cada frame las naves tienen una probababilidad de disparo del 4%
-    if (Math.random() < ENEMY_SHOOTING_PROBABILITY) {
-        // Ahora vamos a elegir una nave al azar de la primera linea
-        var randomIndex = getRandomInt(0, enemyFirstLine.length)
-        enemy = enemyFirstLine[randomIndex]
-        createEnemyBullet(enemy)
+    if (enemySpaceshipsList.length != 0){
+        // Cada frame las naves tienen una probababilidad de disparo del 4%
+        if (Math.random() < ENEMY_SHOOTING_PROBABILITY) {
+            // Ahora vamos a elegir una nave al azar de la primera linea
+            var randomIndex = getRandomInt(0, enemyFirstLine.length)
+            enemy = enemyFirstLine[randomIndex]
+            createEnemyBullet(enemy)
+        }
     }
 }
     

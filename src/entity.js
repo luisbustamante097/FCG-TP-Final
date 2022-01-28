@@ -148,3 +148,14 @@ function createShield(position) {
     scene.add(shield)
     shields.push(shield)
 }
+
+//########################################
+//---------------- HEARTS ----------------
+function createHeart(heartTexture, x, y){
+    var heartMaterial = new THREE.SpriteMaterial( { map: heartTexture});
+    var sprite = new THREE.Sprite( heartMaterial );
+    sprite.position.set( x, y, 0 );
+    sprite.scale.set( 30, 30, 1 ); // imageWidth, imageHeight
+    sceneOrtho.add( sprite );
+    hearts.push(sprite)
+}
