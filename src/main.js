@@ -62,12 +62,12 @@ const MAINSHIP_SPEED = 250
 const SHIELDS_MAX_LIFE = 100
 const SHIELD_LIFE_DECREASE = 10
 
-//*** Ejecución de funciones principales
+//*** Ejecución de función principal
 main();
 
 // Se realiza de esta manera para que se termine de ejecutar todo el init() antes de que se empieze a animar.
-// De lo contrario se van a tener errores en animate(), pues los Mesh no se terminaron de cargar todavía
-// debido a su mayor complejidad como modelo.
+// De lo contrario se van a tener errores en animate(), pues los Mesh no se terminarían de cargar todavía,
+// debido a que se deben importar desde un archivo.
 async function main(){
     await init()
     animate()
@@ -87,17 +87,17 @@ async function init(){
 	// Agregamos camara a la escena
 	scene.add(camera);
     
-    sceneOrtho = new THREE.Scene();
-    
-    cameraOrtho = new THREE.OrthographicCamera( - SCREEN_WIDTH / 2, SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2, - SCREEN_HEIGHT / 2, 1, 10 );
-    cameraOrtho.position.z = 10;
-    
-
     // Seteo la posición de la camara mirando a la escena
 	camera.lookAt(scene.position);	
     // La acomodo de acuerdo a como queremos el juego
 	camera.position.set(0,200,70)
 	camera.rotation.x -= 4*Math.PI/16
+    
+    // Creamos un segundo par de camara y escena para los Sprites que van en la pantalla
+    cameraOrtho = new THREE.OrthographicCamera( - SCREEN_WIDTH / 2, SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2, - SCREEN_HEIGHT / 2, 1, 10 );
+    sceneOrtho = new THREE.Scene();
+    cameraOrtho.position.z = 10;
+    
     
     //---------------------INICIALIZAR RENDERER---------------------
     renderer = new THREE.WebGLRenderer({ antialias: true})
@@ -141,9 +141,11 @@ async function init(){
     ])
     scene.background = skybox_texture
     
-    //####################################//
-    //------------- ENTITIES -------------//
-    //----Creo main ship
+    //###################################################//
+    //------------- ENTITIES INITIALIZATION -------------//
+    //? Estas dos son las únicas funciones que trabajan con el modelo de promesas de async
+    // La razón es que si no se terminaran de cargar los modelos, se terminan dando errores de cosas indefinidas
+    //----Creo la mainShip
     await createMainShip()
     //----Creo las naves enemigas
     await createEnemies()
@@ -153,7 +155,7 @@ async function init(){
     // Además necesito la lista de las naves en primera linea (necesario para los disparos)
     enemyFirstLine = [...enemySpaceshipsMatrix[0]]
     
-    //----Pinto las naves
+    //----Pinto las naves (solo estetico)
     enemyFirstLine.forEach(enemy => {
         enemy.material.color.setHex( 0xFF0000 )
     });
@@ -174,13 +176,11 @@ async function init(){
         shieldsLife[shield.uuid] = SHIELDS_MAX_LIFE
     })
     
-    // Creción de corazones (en forma de sprite) para mostrar la vida
+    //--- Creo los corazones (en forma de sprite) para mostrar la vida del jugador en pantalla
     var heartTexture = new THREE.TextureLoader().load( 'images/heart.png' );
     createHeart(heartTexture, SCREEN_WIDTH/2 - 50 , -SCREEN_HEIGHT/2 + 50)
     createHeart(heartTexture, SCREEN_WIDTH/2 - 85 , -SCREEN_HEIGHT/2 + 50)
     createHeart(heartTexture, SCREEN_WIDTH/2 - 120, -SCREEN_HEIGHT/2 + 50)
-    
-    
 }
 
 //Funcion para animar (60 FPS)
@@ -188,9 +188,20 @@ function animate() {
     requestAnimationFrame( animate )
 	render()
     
+    // Acá se termino el juego
     if (endOfGame){
-        debugger
-    } else{
+        // Esta condición es solo para dejar pasar una ejecución más del render,
+        // de lo contrario no se muestra los carteles de finalización (no se porque)
+        if (mainShipLife == 0){
+            mainShipLife = -1
+        } else{
+            // Acá se detiene todo el juego, no debería proseguir desde acá
+            return
+        }
+    }
+    
+    // Esto se va a ejecutar mientras que no termine el juego
+    if (!endOfGame) {
         update()
     }    
 }
@@ -208,34 +219,10 @@ function render() {
 
 function update() {
     
-    //########################################//
-    //--------------- KEYBOARD ---------------//
-	var moveDistance = MAINSHIP_SPEED * movementClock.getDelta()
+    //#######################################//
+    //---------- MAINSHIP MOVEMENT ----------//
     var moving = false
-    
-    function pressedLeft() {
-        return keyboard.pressed("A") || keyboard.pressed("left")
-    }
-    function pressedRight() {
-        return keyboard.pressed("D") || keyboard.pressed("right")
-    }
-    
-	if ( pressedLeft() && mainShip.position.x > -MAP_WIDE_X ){
-	    mainShip.position.x -= moveDistance
-        saveMovementsFromMainship(-moveDistance)
-        moving = true
-    }
-	if ( pressedRight() && !moving && mainShip.position.x < MAP_WIDE_X ){
-        mainShip.position.x += moveDistance
-        saveMovementsFromMainship(+moveDistance)
-        moving = true
-    }
-	
-    
-    //---------------Disparar bullets
-    if ( keyboard.down("space") ){
-        createMainShipBullet()
-    }
+	mainShipMovement(moving)
     
     //#########################################//
     //------------ CAMERA MOVEMENT ------------//
@@ -244,7 +231,6 @@ function update() {
     //########################################//
     //--------- ENEMY SHIPS MOVEMENT ---------//
     moveEnemies()
-    
     
     
     //###########################################//
@@ -257,9 +243,17 @@ function update() {
     //--- Movimiento y destruccion de los bullets enemigos
     enemyBulletsBehaviour()
     
-     //########################################//
+    
+    //########################################//
     //--------- ENEMY SHIPS SHOOTING ---------//       
     enemyShooting()
+    
+    //#######################################//
+    //---------- MAINSHIP SHOOTING ----------// 
+    if ( keyboard.down("space") ){
+        createMainShipBullet()
+    }
+    
     
     //##########################################//
     //--------------- COLLISIONS ---------------//
@@ -277,28 +271,24 @@ function update() {
     
     
     //#######################################//
-    //------------ FIN DEL JUEGO ------------//
+    //------------ END OF GAME? ------------//
     if (mainShipLife == 0){
-        console.log("PERDISTE!")
-        var endText = new SpriteText('Perdiste :(', 45);
+        endOfGameAction("Perdiste :(")
+    }
+    if (enemySpaceshipsList.length == 0){
+        endOfGameAction("Ganaste! :D")
+    }
+    
+    function endOfGameAction (text){
+        var endText = new SpriteText(text, 45)
         var endText2 = new SpriteText('Presiona F5 para reiniciar', 30);
-        sceneOrtho.add(endText);
         endText.position.set(0,50,0)
+        sceneOrtho.add(endText);
         sceneOrtho.add(endText2);
         
         endOfGame = true
     }
     
-    if (enemySpaceshipsList.length == 0){
-        console.log("GANASTE!")
-        var endText = new SpriteText('Ganaste! :D', 45);
-        var endText2 = new SpriteText('Presiona F5 para reiniciar', 30);
-        sceneOrtho.add(endText);
-        endText.position.set(0,50,0)
-        sceneOrtho.add(endText2);
-        
-        endOfGame = true
-    }
     
     //#######################################//
     //--------------- UPDATES ---------------//
