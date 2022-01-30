@@ -53,10 +53,14 @@ var endOfGame = false
 //* Constantes y variables importantes
 // Máximo ancho del mapa
 const MAP_WIDE_X = 300
+// Máximo largo del mapa
+const MAP_WIDE_Y = 500
 // Cantidad de naves
 const SHIPS_IN_ROW = 12, SHIPS_IN_COLS = 5
 // Velocidad de la mainShip
 const MAINSHIP_SPEED = 250
+// Posición (absoluta) de los shields
+const SHIELD_POSITION_X = 180
 
 //* Constantes para los shields
 const SHIELDS_MAX_LIFE = 100
@@ -90,8 +94,8 @@ async function init(){
     // Seteo la posición de la camara mirando a la escena
 	camera.lookAt(scene.position);	
     // La acomodo de acuerdo a como queremos el juego
-	camera.position.set(0,200,70)
-	camera.rotation.x -= 4*Math.PI/16
+	camera.position.set(0,200,-10)
+	camera.rotation.x -= 5.3*Math.PI/16
     
     // Creamos un segundo par de camara y escena para los Sprites que van en la pantalla
     cameraOrtho = new THREE.OrthographicCamera( - SCREEN_WIDTH / 2, SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2, - SCREEN_HEIGHT / 2, 1, 10 );
@@ -118,14 +122,39 @@ async function init(){
     scene.add( ambientLight )
     
     //----Creo Luz direccional
-    var pointLight = new THREE.PointLight( 0xffffff, 1 );
-    pointLight.position.set( 25, 50, 25 );
+    var pointLight = new THREE.PointLight( 0xFFFFFF, 0.75 );
+    pointLight.position.set( 0, 30, 0 );
+    scene.add( pointLight );
+    pointLight = new THREE.PointLight( 0xFFFFFF, 0.75 );
+    pointLight.position.set( -SHIELD_POSITION_X, 30, 0 );
+    scene.add( pointLight );
+    pointLight = new THREE.PointLight( 0xFFFFFF, 0.75 );
+    pointLight.position.set( SHIELD_POSITION_X, 30, 0 );
+    scene.add( pointLight );
+    
+    var pointLight = new THREE.PointLight( 0xFFFFFF, 1 );
+    pointLight.position.set( 0,30,-400 );
     scene.add( pointLight );
     
     //###################################//
     //------------- TESTING -------------//
     //TODO: Comentar cuando ya no se necesite
-    initTesting()
+    // initTesting()
+    
+    
+    //##################################//
+    //----------- LEVEL BASE -----------//
+    createLevelBase()
+    
+    // Grids laterales:
+    var grid1 = new THREE.GridHelper( 1000, 50 )
+    grid1.position.set(-MAP_WIDE_X,500,-250)
+    grid1.rotation.z = Math.PI/2
+    scene.add( grid1 )
+    var grid2 = new THREE.GridHelper( 1000, 50 )
+    grid2.position.set(MAP_WIDE_X,500,-250)
+    grid2.rotation.z = Math.PI/2
+    scene.add( grid2 )
     
     //##################################//
     //------------- SKYBOX -------------//
@@ -168,8 +197,8 @@ async function init(){
     
     //----Creo los shields
     createShield(new THREE.Vector3(0,0,-100))
-    createShield(new THREE.Vector3(-180,0,-100))
-    createShield(new THREE.Vector3(180,0,-100))
+    createShield(new THREE.Vector3(-SHIELD_POSITION_X,0,-100))
+    createShield(new THREE.Vector3(SHIELD_POSITION_X,0,-100))
     
     //--- Asigno la salud a cada Shield
     shields.forEach(shield => {
@@ -297,7 +326,7 @@ function update() {
     //###################################//
     //------------- TESTING -------------//
     //TODO: Comentar cuando ya no se necesite
-    animateTesting();
+    // animateTesting();
 
     
 }

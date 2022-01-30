@@ -1,7 +1,7 @@
 //* Variables y constantes para el movimiento de las naves
 const ENEMIES_INITIAL_SPEED = 30
-const ENEMIES_STEP_DOWN = 2
-const ENEMIES_SPEED_INCREASE = 5
+const ENEMIES_STEP_DOWN = 4
+const ENEMIES_SPEED_INCREASE = 6
 var currentSpeed = ENEMIES_INITIAL_SPEED
 var speedSign = 1
 
