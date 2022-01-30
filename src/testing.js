@@ -49,36 +49,14 @@ function animateTesting() {
     wireframeCube.rotation.y -= 0.01;
     
     // var moveDistance = MAINSHIP_SPEED * movementClock.getDelta()
-    // if ( keyboard.pressed("W") || keyboard.pressed("up") )      //TODO: Quitar
+    // if ( keyboard.pressed("W") || keyboard.pressed("up") )
 	//     mainShip.position.z -= moveDistance
 		
-	// if ( keyboard.pressed("S") || keyboard.pressed("down") )    //TODO: Quitar
+	// if ( keyboard.pressed("S") || keyboard.pressed("down") )
     //     mainShip.position.z += moveDistance
 
-    //----Update de los controles Orbit //TODO: sacar cuando terminemos
+    //----Update de los controles Orbit
     // controls.update();
-    //----Update de los stats //TODO: sacar cuando terminemos
+    //----Update de los stats
     stats.update();
 }
-
-
-//TODO: Sacar cuando terminemos
-//!--------------------------------------------------------------------------
-//!---------------------------CODIGO AUXILIAR--------------------------------
-//!--------------------------------------------------------------------------
-
-// Este codigo es para crear una caja normal como mainship
-function createBox() {
-    // Geometry: Box
-    var geometry = new THREE.BoxGeometry( 20, 20, 20)
-    // Material: Standard
-    var material = new THREE.MeshStandardMaterial( { color: 0xff0051 })
-    // Mesh: geometry + material
-    mainShip = new THREE.Mesh ( geometry, material )
-    mainShip.position.set(0,10,250)
-    // Lo agrego a la escena
-    scene.add( mainShip )
-} 
-//!--------------------------------------------------------------------------
-//!---------------------------CODIGO AUXILIAR--------------------------------
-//!--------------------------------------------------------------------------

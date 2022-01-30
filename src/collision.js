@@ -1,3 +1,9 @@
+/**
+* Descripción: Detecta collisiones en un objeto
+* @param object el objeto a ser collisionado
+* @param handler la función que será levantada si se detecta una colisión
+* @param collidableMeshesListOfObject los únicos objetos que pueden collisionar en "object"
+*/
 function checkIfCollides(object, handler, collidableMeshesListOfObject) {
     var originPoint = object.position.clone()
     var position = object.geometry.attributes.position
