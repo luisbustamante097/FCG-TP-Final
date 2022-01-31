@@ -5,12 +5,9 @@ import platform
 if platform.system() == "Linux" or platform.system() == "Darwin":
     choice = input("Execute with 'python3'? (Y/N): ")
     if choice == "Y" or choice == "y":
-        pythonString = "python3"
+        command = "python3 -m http.server 8000"
     else:
-        pythonString = "python"
-    
-    # Mac, Linux
-    command = pythonString + " -m SimpleHTTPServer 8000"
+        command = "python -m SimpleHTTPServer 8000"
 else:
     # Windows
     command = "python -m http.server 8000"

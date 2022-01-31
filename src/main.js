@@ -93,7 +93,7 @@ async function init(){
 	camera.rotation.x -= 5.3*Math.PI/16
     
     // Creamos un segundo par de camara y escena para los Sprites que van en la pantalla
-    cameraOrtho = new THREE.OrthographicCamera( - SCREEN_WIDTH / 2, SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2, - SCREEN_HEIGHT / 2, 1, 10 );
+    cameraOrtho = new THREE.OrthographicCamera( - SCREEN_WIDTH / 2, SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2, - SCREEN_HEIGHT / 2, 1, 1000 );
     sceneOrtho = new THREE.Scene();
     cameraOrtho.position.z = 10;
     
@@ -318,7 +318,7 @@ function update() {
     
     //###################################//
     //------------- TESTING -------------//
-    // initTesting()  //? Solo descomentar con proposito de testing
+    // animateTesting()  //? Solo descomentar con proposito de testing
 }
 
 
