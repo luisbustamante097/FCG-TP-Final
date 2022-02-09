@@ -181,6 +181,24 @@ function createLevelBase() {
     var levelBase = new THREE.Mesh ( geometry, material )
 
     levelBase.position.set(0,-10,-400)
-    levelBase.material.opacity = 0.30
+    levelBase.material.opacity = 0.2
     scene.add(levelBase)
+}
+
+//#################################//
+//----------- PARTICLES -----------//
+function createBackgroundParticles(){
+    const PARTICLES_QUANTITY = 2500
+    var vertices = []
+    for ( let i = 0; i < PARTICLES_QUANTITY; i++ ) {
+        const x = THREE.MathUtils.randFloatSpread( FAR*3 );
+        const y = THREE.MathUtils.randFloat( -100, -FAR );
+        const z = THREE.MathUtils.randFloat( 200, -FAR*1.5 );
+        vertices.push( x, y, z );
+    }
+    var geometry = new THREE.BufferGeometry();
+    geometry.setAttribute( 'position', new THREE.Float32BufferAttribute( vertices, 3 ) );
+    var material = new THREE.PointsMaterial( { size: 5, color: 0xBBBBBB } );
+    var particles = new THREE.Points( geometry, material );
+    scene.add( particles );
 }

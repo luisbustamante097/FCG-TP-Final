@@ -136,7 +136,8 @@ async function init(){
     // Creo una base semi transparente debajo de todo
     createLevelBase()
     
-    // Grids laterales:
+    //#############################//
+    //----------- GRIDS -----------//
     var grid1 = new THREE.GridHelper( 1000, 50 )
     grid1.position.set(-MAP_WIDE_X,500,-250)
     grid1.rotation.z = Math.PI/2
@@ -160,6 +161,12 @@ async function init(){
     ])
     scene.background = skybox_texture
     
+    //#####################################//
+    //------------- PARTICLES -------------//
+    createBackgroundParticles()
+    
+
+
     //###################################################//
     //------------- ENTITIES INITIALIZATION -------------//
     //? Estas dos son las únicas funciones que trabajan con el modelo de promesas de async
