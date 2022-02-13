@@ -24,14 +24,6 @@ function initTesting (){
     const axesHelper = new THREE.AxesHelper(100)
     scene.add( axesHelper )
 
-    //#################################//
-    //------------- STATS -------------//
-    // displays current and past frames per second attained by scene
-    stats = new Stats();
-    stats.domElement.style.position = 'absolute';
-    stats.domElement.style.bottom = '0px';
-    stats.domElement.style.zIndex = 100;
-    document.body.appendChild( stats.domElement );
     
     //####################################//
     //------------- ENTITIES -------------//
@@ -57,6 +49,4 @@ function animateTesting() {
 
     //----Update de los controles Orbit
     // controls.update();
-    //----Update de los stats
-    stats.update();
 }

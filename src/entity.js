@@ -37,9 +37,9 @@ async function createMainShip() {
     }
     
     await geometryAsyncLoader()
-    // ---- Idea de la solucion: https://discourse.threejs.org/t/how-to-deal-with-async-loader/15861/5
+    // ---- Idea de la solucion: https://discourse.threejs.org/t/how-to-deal-with-async-loader/15861/6
     // Hago un lio con await/async solo para que en este punto exacto el mainShip este correctamente cargado
-    //  si no lo hiciera asi, el enemyGeometry quedaría en undefined, puesto que la carga se tarda un poco
+    //  si no lo hiciera asi, el mainShip quedaría en undefined, puesto que la carga se tarda un poco
     
 }
 
@@ -106,7 +106,7 @@ async function loadEnemyGeometry() {
     }
     
     await geometryAsyncLoader();
-    // ---- Idea de la solucion: https://discourse.threejs.org/t/how-to-deal-with-async-loader/15861/5
+    // ---- Idea de la solucion: https://discourse.threejs.org/t/how-to-deal-with-async-loader/15861/6
     // Hago un lio con await/async solo para que en este punto exacto el enemyGeometry este correctamente cargado
     //  si no lo hiciera asi, el enemyGeometry quedaría en undefined, puesto que la carga se tarda un poco
     return enemyGeometry
@@ -171,34 +171,4 @@ function createHeart(heartTexture, x, y){
     sprite.scale.set( 30, 30, 1 ); // imageWidth, imageHeight
     sceneOrtho.add( sprite );
     hearts.push(sprite)
-}
-
-//##################################//
-//----------- LEVEL BASE -----------//
-function createLevelBase() {
-    var geometry = new THREE.BoxGeometry( MAP_WIDE_X*2, 20, 850)
-    var material = new THREE.MeshStandardMaterial( { color: 0x555555, transparent: true })
-    var levelBase = new THREE.Mesh ( geometry, material )
-
-    levelBase.position.set(0,-10,-400)
-    levelBase.material.opacity = 0.2
-    scene.add(levelBase)
-}
-
-//#################################//
-//----------- PARTICLES -----------//
-function createBackgroundParticles(){
-    const PARTICLES_QUANTITY = 2500
-    var vertices = []
-    for ( let i = 0; i < PARTICLES_QUANTITY; i++ ) {
-        const x = THREE.MathUtils.randFloatSpread( FAR*3 );
-        const y = THREE.MathUtils.randFloat( -100, -FAR );
-        const z = THREE.MathUtils.randFloat( 200, -FAR*1.5 );
-        vertices.push( x, y, z );
-    }
-    var geometry = new THREE.BufferGeometry();
-    geometry.setAttribute( 'position', new THREE.Float32BufferAttribute( vertices, 3 ) );
-    var material = new THREE.PointsMaterial( { size: 5, color: 0xBBBBBB } );
-    var particles = new THREE.Points( geometry, material );
-    scene.add( particles );
 }

@@ -81,10 +81,10 @@ async function init(){
     scene = new THREE.Scene()
     
     //---------------------INICIALIZAR CAMERA---------------------
-	// Creamos la camara con los parametros adecuados
-	camera = new THREE.PerspectiveCamera( VIEW_ANGLE, ASPECT, NEAR, FAR);
-	// Agregamos camara a la escena
-	scene.add(camera);
+    // Creamos la camara con los parametros adecuados
+    camera = new THREE.PerspectiveCamera( VIEW_ANGLE, ASPECT, NEAR, FAR);
+    // Agregamos camara a la escena
+    scene.add(camera);
     
     // Seteo la posición de la camara mirando a la escena
 	camera.lookAt(scene.position);	
@@ -98,7 +98,7 @@ async function init(){
     cameraOrtho.position.z = 10;
     
     //---------------------INICIALIZAR RENDERER---------------------
-    renderer = new THREE.WebGLRenderer({ antialias: true})
+    renderer = new THREE.WebGLRenderer()
     renderer.setClearColor("#222222")
     
     // Modificamos donde y como va a ir el renderer (burocracia)
@@ -111,25 +111,13 @@ async function init(){
         
     //##################################//
     //------------- LIGHTS -------------//
-    //----Creo Luz de Ambiente
-    var ambientLight = new THREE.AmbientLight ( 0xffffff, 0.5)
-    scene.add( ambientLight )
-    
-    //----Creo 3 Point lights para cada uno de los escudos
-    var pointLight = new THREE.PointLight( 0xFFFFFF, 0.75 );
-    pointLight.position.set( 0, 30, 0 );
-    scene.add( pointLight );
-    pointLight = new THREE.PointLight( 0xFFFFFF, 0.75 );
-    pointLight.position.set( -SHIELD_POSITION_X, 30, 0 );
-    scene.add( pointLight );
-    pointLight = new THREE.PointLight( 0xFFFFFF, 0.75 );
-    pointLight.position.set( SHIELD_POSITION_X, 30, 0 );
-    scene.add( pointLight );
-    
-    //----Creo 1 Point light para iluminar las naves enemigas
-    var pointLight = new THREE.PointLight( 0xFFFFFF, 1 );
-    pointLight.position.set( 0,30,-400 );
-    scene.add( pointLight );
+    // Crea todas las luces del juego
+    enableLights()
+
+    //#################################//
+    //------------- STATS -------------//
+    // Muestra el rendimiento en FPS del juego 
+    enableStats()
     
     //##################################//
     //----------- LEVEL BASE -----------//
@@ -138,37 +126,23 @@ async function init(){
     
     //#############################//
     //----------- GRIDS -----------//
-    var grid1 = new THREE.GridHelper( 1000, 50 )
-    grid1.position.set(-MAP_WIDE_X,500,-250)
-    grid1.rotation.z = Math.PI/2
-    scene.add( grid1 )
-    var grid2 = new THREE.GridHelper( 1000, 50 )
-    grid2.position.set(MAP_WIDE_X,500,-250)
-    grid2.rotation.z = Math.PI/2
-    scene.add( grid2 )
+    // Crea grids a los laterales para marcar el límite del juego
+    enableGrids()
     
     //##################################//
     //------------- SKYBOX -------------//
-    var skybox_loader = new THREE.CubeTextureLoader()
-    var skybox_dir ='images/stars/'
-    var skybox_texture = skybox_loader.load([
-        skybox_dir + 'px.png',
-        skybox_dir + 'nx.png',
-        skybox_dir + 'py.png',
-        skybox_dir + 'ny.png',
-        skybox_dir + 'pz.png',
-        skybox_dir + 'nz.png',
-    ])
-    scene.background = skybox_texture
+    // Fondo del juego
+    enableSkybox()
     
     //#####################################//
     //------------- PARTICLES -------------//
+    // Conjunto de particulas bajo la base
     createBackgroundParticles()
     
 
 
-    //###################################################//
-    //------------- ENTITIES INITIALIZATION -------------//
+    //#######################################################//
+    //--------------- ENTITIES INITIALIZATION ---------------//
     //? Estas dos son las únicas funciones que trabajan con el modelo de promesas de async
     //? La razón es que si no se terminaran de cargar los modelos, se terminan dando errores de cosas indefinidas
     //----Creo la mainShip
@@ -322,6 +296,8 @@ function update() {
     //--------------- UPDATES ---------------//
     //--- Update del Keyboard
     keyboard.update();
+    //----Update de los stats
+    stats.update();
     
     //###################################//
     //------------- TESTING -------------//
