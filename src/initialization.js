@@ -35,11 +35,11 @@ function enableStats() {
 //#############################//
 //----------- GRIDS -----------//
 function enableGrids() {
-    var grid1 = new THREE.GridHelper(1000, 50)
+    var grid1 = new THREE.GridHelper(1000, 5)
     grid1.position.set(-MAP_WIDE_X, 500, -250)
     grid1.rotation.z = Math.PI / 2
     scene.add(grid1)
-    var grid2 = new THREE.GridHelper(1000, 50)
+    var grid2 = new THREE.GridHelper(1000, 5)
     grid2.position.set(MAP_WIDE_X, 500, -250)
     grid2.rotation.z = Math.PI / 2
     scene.add(grid2)
@@ -76,17 +76,18 @@ function createLevelBase() {
 //#################################//
 //----------- PARTICLES -----------//
 function createBackgroundParticles(){
-    const PARTICLES_QUANTITY = 2500
+    const PARTICLES_QUANTITY = 1250
     var vertices = []
     for ( let i = 0; i < PARTICLES_QUANTITY; i++ ) {
         const x = THREE.MathUtils.randFloatSpread( FAR*3 );
-        const y = THREE.MathUtils.randFloat( -100, -FAR );
+        const y = THREE.MathUtils.randFloat( -200, -FAR );
         const z = THREE.MathUtils.randFloat( 200, -FAR*1.5 );
         vertices.push( x, y, z );
     }
     var geometry = new THREE.BufferGeometry();
     geometry.setAttribute( 'position', new THREE.Float32BufferAttribute( vertices, 3 ) );
-    var material = new THREE.PointsMaterial( { size: 5, color: 0xBBBBBB } );
+    var material = new THREE.PointsMaterial( { size: 6, color: 0x666666 } );
     var particles = new THREE.Points( geometry, material );
     scene.add( particles );
+    return particles
 }

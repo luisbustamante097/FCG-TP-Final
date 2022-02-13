@@ -39,6 +39,8 @@ var hearts = []
 //* Vida de la nave
 var mainShipLife = 3
 
+var particles, particles2
+
 //* Wait stack de movimientos de la camara
 var cameraMovementsStack = []
 
@@ -54,6 +56,8 @@ const MAP_WIDE_Y = 500
 const SHIPS_IN_ROW = 12, SHIPS_IN_COLS = 5
 // Velocidad de la mainShip
 const MAINSHIP_SPEED = 250
+// Limite de movimiento en z de las particulas
+const PARTICLES_Z_LIMIT = FAR*1.5
 
 //* Constantes para los shields
 const SHIELDS_MAX_LIFE = 100
@@ -137,7 +141,12 @@ async function init(){
     //#####################################//
     //------------- PARTICLES -------------//
     // Conjunto de particulas bajo la base
-    createBackgroundParticles()
+    particles = createBackgroundParticles()
+    particles2 = createBackgroundParticles()
+    particles2.position.z = -PARTICLES_Z_LIMIT
+    // La idea es tener dos cjtos de particulas que se mueven
+    // cuando uno llegue al limite reaparecera en la posición original del otro
+    // De esa forma parece que el cjto de particulas es infinito
     
 
 
@@ -270,6 +279,19 @@ function update() {
     //--- Chequeo si alguna de las bullets golpea en los shields
     shieldsCollisionDetect() 
     
+    
+    //########################################//
+    //---------- PARTICLES MOVEMENT ----------//
+    particlesMovement(particles)
+    particlesMovement(particles2)
+    
+    function particlesMovement(particles){
+        const PARTICLES_SPEED = 1
+        particles.position.z += PARTICLES_SPEED
+        if (particles.position.z > PARTICLES_Z_LIMIT){
+            particles.position.z = -PARTICLES_Z_LIMIT
+        }
+    }
     
     
     //#######################################//
