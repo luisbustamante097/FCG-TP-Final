@@ -1,6 +1,8 @@
-![GitHub](https://img.shields.io/github/license/luisbustamante097/FCG-TP-Final)
+[![GitHub](https://img.shields.io/github/license/luisbustamante097/FCG-TP-Final)](https://github.com/luisbustamante097/FCG-TP-Final/blob/master/LICENSE)
 ![GitHub top language](https://img.shields.io/github/languages/top/luisbustamante097/FCG-TP-Final)
-![Website](https://img.shields.io/website?down_message=down&up_message=online&url=https%3A%2F%2Ffcg-tp-final.glitch.me%2F)
+[![Website](https://img.shields.io/website?down_message=down&up_message=online&url=https%3A%2F%2Ffcg-tp-final.glitch.me%2F)](https://fcg-tp-final.glitch.me/)
+
+
 
 # Space Invaders 3D
 
