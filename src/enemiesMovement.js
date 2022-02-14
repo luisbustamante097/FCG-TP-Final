@@ -32,10 +32,7 @@ function moveEnemies(){
         
         // También debe incrementar la velocidad de a poco
         currentSpeed += ENEMIES_SPEED_INCREASE
-        
-        if (rightShip.position.x > MAP_WIDE_X) debugger; //! si entra acá hay error (BORRAR AL TERMINAR)
     }
-    
 }
     
 function lastShipOnRightSide(){

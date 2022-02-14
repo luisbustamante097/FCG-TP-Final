@@ -134,6 +134,7 @@ function createMainShipBullet() {
     // Guardo la posición de la nave, y se la seteo al bullet
     var originPoint = mainShip.position.clone()
     bullet.position.copy(originPoint)
+    bullet.position.z -= 30
     scene.add( bullet )
     // Lo agrego a la lista de cosas que colisionan de los enemies
     mainShipBulletsList.push(bullet)

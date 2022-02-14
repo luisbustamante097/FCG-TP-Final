@@ -1,16 +1,16 @@
 //?######################################################
 //?------DOCUMENTACIÓN DEL MOVIMIENTO DE LA CAMARA-------
 /*
-* La camara no este atada a la nave solo bindeando su posicion
-* La mecanica es que haya cierto delay entre que el objeto se mueve y que la camara llegue hasta el
-* La forma en que se implemento es a traves de un stack de movimiento
+* La cámara no está atada a la nave solo bindeando su coordenaza x
+* La mecanica es que haya cierto delay entre que el objeto se mueve y que la cámara llegue hasta el
+* La forma en que se implemento es a través de un stack de movimiento
 * Y el comportamiento de este esta dividido en dos situaciones
 * - Cuando la nave se esta moviendo:
 *     Se stackean los movimientos que realizo la nave, dividido por la variable steps, para hacer el delay
 *     Luego se popean y ejecutan los pasos stackeados, pero solo se hacen stepsForMoving pasos por ciclo de ejec
 * - Cuando la nave no se esta moviendo:
 *     Se limpia el stack
-*     Se calcula la distancia desde la camara a la nave, y se stackea con una distancia paso de stepsForStop
+*     Se calcula la distancia desde la cámara a la nave, y se stackea con una distancia paso de stepsForStop
 *     Luego se popean y ejecutan los pasos stackeados, pero solo se hacen stepsForStop pasos por ciclo de ejec
 * Si se llega a una distancia veryCloseRadius de la nave, se copia la pos.x de la nave
 */
@@ -51,7 +51,6 @@ function cameraMovement(moving) {
             }
         }
     }
-    // console.log(cameraMovementsStack.length)
 }
 
 // Stackea la cantidad de pasos necesarios desde la camara hasta la nave
@@ -62,7 +61,6 @@ function traceToMainShip() {
     for (let i = 0; i < distance; i += stepsForStop) {
         cameraMovementsStack.push( direction*stepsForStop )
     }
-    // console.log(distance)
 }
 
 // Sumo tantos pasos como sea el parametro (y sin que se acabe el stack)

@@ -64,6 +64,8 @@ const SHIELDS_MAX_LIFE = 100
 const SHIELD_LIFE_DECREASE = 10
 // Posición (absoluta) de los shields
 const SHIELD_POSITION_X = 180
+const SHIELD_POSITION_Z = 100
+
 
 //*** Ejecución de función principal
 main();
@@ -170,9 +172,9 @@ async function init(){
     enemySpaceshipsMatrix[4].forEach(enemy => { enemy.material.color.setHex( 0x0000FF ) });
     
     //----Creo los shields
-    createShield(new THREE.Vector3(0,0,-100))
-    createShield(new THREE.Vector3(-SHIELD_POSITION_X,0,-100))
-    createShield(new THREE.Vector3(SHIELD_POSITION_X,0,-100))
+    createShield(new THREE.Vector3(0,                   0,-SHIELD_POSITION_Z))
+    createShield(new THREE.Vector3(-SHIELD_POSITION_X,  0,-SHIELD_POSITION_Z))
+    createShield(new THREE.Vector3(SHIELD_POSITION_X,   0,-SHIELD_POSITION_Z))
     
     //--- Asigno la salud a cada Shield
     shields.forEach(shield => {
@@ -296,10 +298,11 @@ function update() {
     
     //#######################################//
     //------------ END OF GAME? ------------//
-    if (mainShipLife == 0){
+    var hasPassedLimit = (enemy) => enemy.position.z > -SHIELD_POSITION_Z-100;
+    if ( mainShipLife == 0 || enemyFirstLine.some(hasPassedLimit) ){
         endOfGameAction("Perdiste :(")
     }
-    if (enemySpaceshipsList.length == 0){
+    if ( enemySpaceshipsList.length == 0 ){
         endOfGameAction("Ganaste! :D")
     }
     

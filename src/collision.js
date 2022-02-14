@@ -8,23 +8,24 @@ function checkIfCollides(object, handler, collidableMeshesListOfObject) {
     var originPoint = object.position.clone()
     var position = object.geometry.attributes.position
     var localVertex = new THREE.Vector3()
-    
     for (var vertexIndex = 0; vertexIndex < position.count; vertexIndex ++){	
         localVertex.fromBufferAttribute( position, vertexIndex )
         var globalVertex = localVertex.applyMatrix4( object.matrix )
+        // directionVector es el vector que apunta desde la posición del object al vertice
         var directionVector = globalVertex.sub( object.position )
-        
-        var ray = new THREE.Raycaster( originPoint, directionVector.clone().normalize() )
+        // Entonces se crea un ray desde el centro del objeto en dirección al vertice
+        // Hago que la distancia máxima hasta la que busca el rayo sea de 300
+        var ray = new THREE.Raycaster( originPoint, directionVector.clone().normalize(),0,300)
         var collisionResults = ray.intersectObjects( collidableMeshesListOfObject )
         if ( collisionResults.length > 0 && collisionResults[0].distance < directionVector.length() ) {
-            handler(object, collisionResults)
+            handler(object, collisionResults[0])
             break;
         }
     }	
 }
 
-function mainShipCollisionHandler(object, collisionResults) {
-    var bullet = collisionResults[0].object
+function mainShipCollisionHandler(object, collisionedObject) {
+    var bullet = collisionedObject.object
     removeEntity(bullet) 
     var index = enemyBulletsList.indexOf(bullet)
     if (index !== -1) { enemyBulletsList.splice(index, 1) }
@@ -41,7 +42,7 @@ function mainShipCollisionHandler(object, collisionResults) {
         sceneOrtho.remove( object );
     }
 }
-function bulletCollisionHandler(enemy, collisionResults) {
+function bulletCollisionHandler(enemy, collisionedObject) {
     // Remuevo la nave y la saco de la lista de naves
     removeEntity(enemy)
     var index = enemySpaceshipsList.indexOf(enemy)
@@ -62,7 +63,7 @@ function bulletCollisionHandler(enemy, collisionResults) {
     }
     
     // Obtengo el bullet que mato a la nave, lo remuevo, y lo saco de su lista
-    var bullet = collisionResults[0].object
+    var bullet = collisionedObject.object
     removeEntity(bullet) 
     var index = mainShipBulletsList.indexOf(bullet)
     if (index !== -1) { mainShipBulletsList.splice(index, 1) }

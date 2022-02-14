@@ -6,8 +6,15 @@ Se trata del famoso juego llamado Space Invaders para navegadores web, hecho con
 ## Prueba online
 Se puede jugar en la siguiente URL: https://fcg-tp-final.glitch.me/
 
+### ¡Aviso importante!
 
-## Instrucciones
+**Se recomienda abrirlo en Google Chrome (se puede tener una perdida importante de FPS en Mozilla)**
+
+### Cómo jugarlo
+Se juega con las teclas `←`/`A` y `→`/`D` para moverse, y `Space` para disparar.
+
+
+# Instrucciones para levantarlo localmente
 Para levantarlo de forma local se deja un script de Python para levantar un servidor con el juego
 Solo se debe ejecutar:
 ```
@@ -18,8 +25,8 @@ o con:
 python3 start_server.py
 ``` 
 
-Luego de eso el juego esta disponible en: http://localhost:8000
+Luego de eso el juego estará disponible en: http://localhost:8000
 
-## ¡Aviso importante!
+# Creditos
 
-**Se recomienda abrirlo en Google Chrome (se puede tener una perdida importante de FPS en Mozilla)**
+- Samuel Metters - Creador de los módelos utilizados para las naves enemigas y la nave principal. https://sketchfab.com/3d-models/low-poly-spaceships-9177fe4356e4451485dc6129c9904eb9
