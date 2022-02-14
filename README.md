@@ -1,3 +1,7 @@
+![GitHub](https://img.shields.io/github/license/luisbustamante097/FCG-TP-Final)
+![GitHub top language](https://img.shields.io/github/languages/top/luisbustamante097/FCG-TP-Final)
+![Website](https://img.shields.io/website?down_message=down&up_message=online&url=https%3A%2F%2Ffcg-tp-final.glitch.me%2F)
+
 # Space Invaders 3D
 
 Proyecto final para la materia de Fundamentos de la Computación Gráfica.
@@ -8,7 +12,7 @@ Se puede jugar en la siguiente URL: https://fcg-tp-final.glitch.me/
 
 ### ¡Aviso importante!
 
-**Se recomienda abrirlo en Google Chrome (se puede tener una perdida importante de FPS en Mozilla)**
+**Se recomienda abrirlo en Google Chrome (se puede tener una perdida importante de FPS en Mozilla Firefox)**
 
 ### Cómo jugarlo
 Se juega con las teclas `←`/`A` y `→`/`D` para moverse, y `Space` para disparar.
